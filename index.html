@@ -1,0 +1,672 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TimedPayout - Claim Your Funds</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+        
+        .container {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .status-card {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+            border-left: 4px solid #28a745;
+        }
+        
+        .status-pending {
+            border-left-color: #ffc107;
+        }
+        
+        .status-ready {
+            border-left-color: #28a745;
+        }
+        
+        .big-button {
+            background: linear-gradient(135deg, #28a745, #20c997);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            font-size: 18px;
+            border-radius: 10px;
+            cursor: pointer;
+            width: 100%;
+            margin: 10px 0;
+            transition: all 0.3s ease;
+        }
+        
+        .big-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(40,167,69,0.3);
+        }
+        
+        .big-button:disabled {
+            background: #6c757d;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .info-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin: 20px 0;
+        }
+        
+        .info-item {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+        }
+        
+        .info-label {
+            font-size: 12px;
+            color: #6c757d;
+            margin-bottom: 5px;
+        }
+        
+        .info-value {
+            font-size: 16px;
+            font-weight: bold;
+            color: #333;
+        }
+        
+        .error {
+            background: #f8d7da;
+            color: #721c24;
+            padding: 10px;
+            border-radius: 5px;
+            margin: 10px 0;
+        }
+        
+        .success {
+            background: #d4edda;
+            color: #155724;
+            padding: 10px;
+            border-radius: 5px;
+            margin: 10px 0;
+        }
+        
+        .info {
+            background: #d1ecf1;
+            color: #0c5460;
+            padding: 10px;
+            border-radius: 5px;
+            margin: 10px 0;
+        }
+        
+        .loading {
+            display: none;
+            text-align: center;
+            margin: 20px 0;
+        }
+        
+        .big-success {
+            background: linear-gradient(135deg, #28a745, #20c997);
+            color: white;
+            border: none;
+            padding: 20px;
+            font-size: 24px;
+            font-weight: bold;
+            border-radius: 15px;
+            text-align: center;
+            margin: 20px 0;
+            animation: pulse 2s infinite;
+        }
+        
+        .big-fail {
+            background: linear-gradient(135deg, #dc3545, #c82333);
+            color: white;
+            border: none;
+            padding: 20px;
+            font-size: 18px;
+            font-weight: bold;
+            border-radius: 15px;
+            text-align: center;
+            margin: 20px 0;
+            animation: shake 0.5s;
+        }
+        
+        .countdown {
+            font-size: 24px;
+            font-weight: bold;
+            color: #667eea;
+            text-align: center;
+            margin: 20px 0;
+        }
+        
+        .wallet-status {
+            padding: 15px;
+            border-radius: 10px;
+            margin: 15px 0;
+            text-align: center;
+            font-weight: bold;
+        }
+        
+        .wallet-correct {
+            background: #d4edda;
+            color: #155724;
+            border: 2px solid #28a745;
+        }
+        
+        .wallet-wrong {
+            background: #fff3cd;
+            color: #856404;
+            border: 2px solid #ffc107;
+        }
+        
+        .wallet-help {
+            background: #f8f9fa;
+            border: 2px solid #6c757d;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+        
+        .wallet-help h4 {
+            margin-top: 0;
+            color: #495057;
+        }
+        
+        .qr-section {
+            text-align: center;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+        
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>💰 Claim Your Funds</h1>
+            <p>Simple one-click payout from your TimedPayout contract</p>
+        </div>
+
+        <!-- Wallet Detection Section -->
+        <div id="wallet-detection">
+            <div class="wallet-help" id="wallet-help" style="display: none;">
+                <h4>📱 How to Connect Your Wallet</h4>
+                <div id="mobile-instructions" style="display: none;">
+                    <p><strong>On Mobile:</strong></p>
+                    <ol>
+                        <li>Open <strong>Trust Wallet</strong> app</li>
+                        <li>Tap <strong>"Browser"</strong> tab (compass icon)</li>
+                        <li>Enter this website URL in the browser</li>
+                        <li>Click "Connect Wallet" again</li>
+                    </ol>
+                </div>
+                <div id="desktop-instructions" style="display: none;">
+                    <p><strong>On Desktop:</strong></p>
+                    <ol>
+                        <li>Install <a href="https://metamask.io" target="_blank">MetaMask extension</a></li>
+                        <li>Refresh this page</li>
+                        <li>Click "Connect Wallet"</li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+
+        <div id="status-section">
+            <div class="status-card status-pending" id="status-card">
+                <h3>📊 Contract Status</h3>
+                <p id="status-text">Click "Connect Wallet" to check contract status</p>
+            </div>
+        </div>
+
+        <div class="info-grid" id="info-grid" style="display: none;">
+            <div class="info-item">
+                <div class="info-label">Available Balance</div>
+                <div class="info-value" id="balance">-</div>
+            </div>
+            <div class="info-item">
+                <div class="info-label">Recipient</div>
+                <div class="info-value" id="recipient">0xEA6e...7Ed1</div>
+            </div>
+            <div class="info-item">
+                <div class="info-label">Payout Time</div>
+                <div class="info-value" id="payout-time">-</div>
+            </div>
+            <div class="info-item">
+                <div class="info-label">Status</div>
+                <div class="info-value" id="status">-</div>
+            </div>
+        </div>
+
+        <div id="countdown-section" style="display: none;">
+            <div class="countdown" id="countdown">Loading...</div>
+        </div>
+
+        <div id="button-section">
+            <button class="big-button" id="connect-btn" onclick="connectWallet()">
+                🔗 Connect Wallet
+            </button>
+            <button class="big-button" id="payout-btn" onclick="executePayout()" disabled style="display: none;">
+                💸 Claim My Funds
+            </button>
+            <button class="big-button" id="emergency-btn" onclick="emergencyPayout()" disabled style="display: none;">
+                🚨 Emergency Withdrawal
+            </button>
+        </div>
+
+        <div id="messages"></div>
+        
+        <div class="loading" id="loading">
+            <p>⏳ Processing transaction...</p>
+        </div>
+
+        <!-- QR Code for Mobile -->
+        <div class="qr-section" id="qr-section" style="display: none;">
+            <h4>📱 Scan with Trust Wallet</h4>
+            <div id="qr-code"></div>
+            <p>Scan this QR code with Trust Wallet camera to open this page in the wallet browser</p>
+        </div>
+
+        <div style="margin-top: 30px; padding: 20px; background: #f8f9fa; border-radius: 10px;">
+            <h4>📋 Instructions:</h4>
+            <ol>
+                <li><strong>Connect your wallet</strong> - Click "Connect Wallet" and select Trust Wallet/MetaMask</li>
+                <li><strong>Check status</strong> - Wait for contract information to load</li>
+                <li><strong>Claim funds</strong> - If ready, click "Claim My Funds"</li>
+                <li><strong>Confirm in wallet</strong> - Approve the transaction in your wallet</li>
+            </ol>
+            
+            <p><strong>⚠️ Important:</strong> Only the designated recipient (0xEA6eFb5d949f34c84DEb4C2b277c7De4357f7Ed1) can claim funds!</p>
+        </div>
+    </div>
+
+    <script>
+        // Replace with your actual contract address when deployed
+        const CONTRACT_ADDRESS = 'YOUR_DEPLOYED_CONTRACT_ADDRESS_HERE'; // Update this after deployment
+        const RECIPIENT_ADDRESS = '0xEA6eFb5d949f34c84DEb4C2b277c7De4357f7Ed1';
+        const CONTRACT_ABI = [
+            {
+                "inputs": [],
+                "name": "payout",
+                "outputs": [],
+                "stateMutability": "nonpayable",
+                "type": "function"
+            },
+            {
+                "inputs": [],
+                "name": "emergencyWithdraw",
+                "outputs": [],
+                "stateMutability": "nonpayable",
+                "type": "function"
+            },
+            {
+                "inputs": [],
+                "name": "getContractInfo",
+                "outputs": [
+                    {"internalType": "address", "name": "recipientAddr", "type": "address"},
+                    {"internalType": "uint256", "name": "payout_time", "type": "uint256"},
+                    {"internalType": "uint256", "name": "currentBalance", "type": "uint256"},
+                    {"internalType": "uint256", "name": "totalReceived", "type": "uint256"},
+                    {"internalType": "bool", "name": "isPaid", "type": "bool"},
+                    {"internalType": "bool", "name": "canPayout", "type": "bool"},
+                    {"internalType": "bool", "name": "canEmergencyWithdraw", "type": "bool"}
+                ],
+                "stateMutability": "view",
+                "type": "function"
+            }
+        ];
+
+        let web3;
+        let contract;
+        let userAccount;
+
+        // Check if we're on mobile
+        function isMobile() {
+            return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+        }
+
+        // Detect wallet environment
+        function detectWalletEnvironment() {
+            // Check for Trust Wallet
+            if (window.ethereum && window.ethereum.isTrust) {
+                return 'trust';
+            }
+            // Check for MetaMask
+            if (window.ethereum && window.ethereum.isMetaMask) {
+                return 'metamask';
+            }
+            // Check for general Web3
+            if (window.ethereum) {
+                return 'web3';
+            }
+            // Check for WalletConnect or other mobile wallets
+            if (window.web3) {
+                return 'legacy_web3';
+            }
+            return 'none';
+        }
+
+        async function connectWallet() {
+            const walletEnv = detectWalletEnvironment();
+            
+            if (walletEnv === 'none') {
+                showWalletHelp();
+                return;
+            }
+
+            try {
+                // Show connecting message
+                showMessage('🔄 Connecting to wallet...', 'info');
+                
+                // For Trust Wallet, MetaMask, and other modern wallets
+                if (window.ethereum) {
+                    web3 = new Web3(window.ethereum);
+                    
+                    // Request account access
+                    await window.ethereum.request({ 
+                        method: 'eth_requestAccounts' 
+                    });
+                    
+                    const accounts = await web3.eth.getAccounts();
+                    
+                    if (accounts.length === 0) {
+                        throw new Error('No accounts found. Please unlock your wallet.');
+                    }
+                    
+                    userAccount = accounts[0];
+                    
+                    // Initialize contract
+                    if (CONTRACT_ADDRESS === 'YOUR_DEPLOYED_CONTRACT_ADDRESS_HERE') {
+                        showMessage('⚠️ Contract not yet deployed. Please wait for deployment.', 'error');
+                        return;
+                    }
+                    
+                    contract = new web3.eth.Contract(CONTRACT_ABI, CONTRACT_ADDRESS);
+                    
+                    // Hide connect button and help
+                    document.getElementById('connect-btn').style.display = 'none';
+                    document.getElementById('wallet-help').style.display = 'none';
+                    
+                    showMessage(`✅ Wallet connected! Address: ${userAccount.substring(0, 8)}...`, 'success');
+                    
+                    await loadContractInfo();
+                } else {
+                    throw new Error('Wallet not detected');
+                }
+                
+            } catch (error) {
+                console.error('Connection error:', error);
+                
+                if (error.code === 4001) {
+                    showMessage('❌ Connection rejected by user', 'error');
+                } else if (error.message.includes('No accounts')) {
+                    showMessage('❌ No accounts found. Please unlock your wallet and try again.', 'error');
+                } else {
+                    showMessage('❌ Failed to connect: ' + error.message, 'error');
+                }
+                
+                showWalletHelp();
+            }
+        }
+
+        function showWalletHelp() {
+            const helpDiv = document.getElementById('wallet-help');
+            const mobileInstr = document.getElementById('mobile-instructions');
+            const desktopInstr = document.getElementById('desktop-instructions');
+            
+            helpDiv.style.display = 'block';
+            
+            if (isMobile()) {
+                mobileInstr.style.display = 'block';
+                desktopInstr.style.display = 'none';
+                
+                // Show QR code option
+                showQRCode();
+            } else {
+                mobileInstr.style.display = 'none';
+                desktopInstr.style.display = 'block';
+            }
+        }
+
+        function showQRCode() {
+            const qrSection = document.getElementById('qr-section');
+            qrSection.style.display = 'block';
+            
+            // Generate QR code with current URL
+            const currentUrl = window.location.href;
+            const qrDiv = document.getElementById('qr-code');
+            qrDiv.innerHTML = `
+                <p>Current URL: <small>${currentUrl}</small></p>
+                <p><strong>📱 Open Trust Wallet → Browser → Enter URL above</strong></p>
+            `;
+        }
+
+        async function loadContractInfo() {
+            try {
+                document.getElementById('status-text').textContent = 'Loading contract information...';
+                
+                const info = await contract.methods.getContractInfo().call();
+                const balance = web3.utils.fromWei(info.currentBalance, 'ether');
+                
+                document.getElementById('balance').textContent = balance + ' ETH';
+                document.getElementById('recipient').textContent = info.recipientAddr.substring(0, 8) + '...';
+                document.getElementById('payout-time').textContent = new Date(info.payout_time * 1000).toLocaleString();
+                
+                if (info.isPaid) {
+                    document.getElementById('status').textContent = 'Paid ✅';
+                    document.getElementById('status-text').textContent = 'Funds have already been claimed.';
+                    document.getElementById('status-card').className = 'status-card status-ready';
+                } else if (info.canPayout) {
+                    document.getElementById('status').textContent = 'Ready 🎉';
+                    document.getElementById('status-text').textContent = 'Funds are ready to claim!';
+                    document.getElementById('status-card').className = 'status-card status-ready';
+                    document.getElementById('payout-btn').style.display = 'block';
+                    document.getElementById('payout-btn').disabled = false;
+                } else if (info.canEmergencyWithdraw) {
+                    document.getElementById('status').textContent = 'Emergency Available 🚨';
+                    document.getElementById('status-text').textContent = 'Emergency withdrawal is available.';
+                    document.getElementById('emergency-btn').style.display = 'block';
+                    document.getElementById('emergency-btn').disabled = false;
+                } else {
+                    document.getElementById('status').textContent = 'Waiting ⏰';
+                    startCountdown(info.payout_time);
+                }
+                
+                document.getElementById('info-grid').style.display = 'grid';
+                
+                // Check if user is the recipient with BIG visual feedback
+                if (userAccount.toLowerCase() === RECIPIENT_ADDRESS.toLowerCase()) {
+                    showWalletStatus('✅ CORRECT WALLET CONNECTED!', 'correct');
+                    showMessage('🎉 Perfect! You are authorized to claim funds from this contract.', 'success');
+                } else {
+                    showWalletStatus('❌ WRONG WALLET CONNECTED', 'wrong');
+                    showMessage('🚫 You are NOT the designated recipient for this contract. Please connect the correct wallet.', 'error');
+                    document.getElementById('payout-btn').disabled = true;
+                    document.getElementById('emergency-btn').disabled = true;
+                }
+                
+            } catch (error) {
+                console.error('Contract info error:', error);
+                showMessage('❌ Failed to load contract info: ' + error.message, 'error');
+            }
+        }
+
+        async function executePayout() {
+            try {
+                document.getElementById('loading').style.display = 'block';
+                document.getElementById('payout-btn').disabled = true;
+                
+                showMessage('📡 Sending transaction...', 'info');
+                
+                const tx = await contract.methods.payout().send({ from: userAccount });
+                
+                // BIG SUCCESS MESSAGE
+                document.getElementById('messages').innerHTML = `
+                    <div class="big-success">
+                        🎉 SUCCESS! FUNDS CLAIMED! 🎉<br>
+                        💰 ETH has been sent to your wallet!<br>
+                        <small>Transaction: ${tx.transactionHash.substring(0, 10)}...</small>
+                    </div>
+                `;
+                
+                await loadContractInfo(); // Refresh status
+                
+            } catch (error) {
+                console.error('Payout error:', error);
+                // BIG FAIL MESSAGE  
+                document.getElementById('messages').innerHTML = `
+                    <div class="big-fail">
+                        ❌ TRANSACTION FAILED ❌<br>
+                        ${error.message.includes('Too early') ? 'Wait for 24-hour period to end!' : 
+                          error.message.includes('Already paid') ? 'Funds already claimed!' :
+                          error.message.includes('Only recipient') ? 'Wrong wallet connected!' :
+                          'Transaction error - try again!'}
+                    </div>
+                `;
+                document.getElementById('payout-btn').disabled = false;
+            } finally {
+                document.getElementById('loading').style.display = 'none';
+            }
+        }
+
+        async function emergencyPayout() {
+            try {
+                document.getElementById('loading').style.display = 'block';
+                document.getElementById('emergency-btn').disabled = true;
+                
+                showMessage('🚨 Sending emergency withdrawal...', 'info');
+                
+                const tx = await contract.methods.emergencyWithdraw().send({ from: userAccount });
+                
+                // BIG SUCCESS MESSAGE
+                document.getElementById('messages').innerHTML = `
+                    <div class="big-success">
+                        🚨 EMERGENCY WITHDRAWAL SUCCESS! 🚨<br>
+                        💰 ETH has been sent to your wallet!<br>
+                        <small>Transaction: ${tx.transactionHash.substring(0, 10)}...</small>
+                    </div>
+                `;
+                
+                await loadContractInfo(); // Refresh status
+                
+            } catch (error) {
+                console.error('Emergency payout error:', error);
+                // BIG FAIL MESSAGE
+                document.getElementById('messages').innerHTML = `
+                    <div class="big-fail">
+                        ❌ EMERGENCY WITHDRAWAL FAILED ❌<br>
+                        ${error.message.includes('not yet available') ? 'Wait 7 days after payout time!' :
+                          error.message.includes('Already paid') ? 'Funds already claimed!' :
+                          'Emergency withdrawal error - contact support!'}
+                    </div>
+                `;
+                document.getElementById('emergency-btn').disabled = false;
+            } finally {
+                document.getElementById('loading').style.display = 'none';
+            }
+        }
+
+        function showWalletStatus(message, type) {
+            // Remove existing wallet status
+            const existing = document.querySelector('.wallet-status');
+            if (existing) {
+                existing.remove();
+            }
+            
+            const statusDiv = document.createElement('div');
+            statusDiv.className = `wallet-status wallet-${type}`;
+            statusDiv.innerHTML = message;
+            
+            // Insert after header
+            const header = document.querySelector('.header');
+            header.insertAdjacentElement('afterend', statusDiv);
+        }
+
+        function startCountdown(payoutTime) {
+            document.getElementById('countdown-section').style.display = 'block';
+            document.getElementById('status-text').textContent = 'Waiting for payout time...';
+            
+            const countdownInterval = setInterval(() => {
+                const now = Math.floor(Date.now() / 1000);
+                const timeLeft = payoutTime - now;
+                
+                if (timeLeft <= 0) {
+                    clearInterval(countdownInterval);
+                    document.getElementById('countdown').textContent = 'Ready to claim! 🎉';
+                    loadContractInfo(); // Refresh to show payout button
+                } else {
+                    const hours = Math.floor(timeLeft / 3600);
+                    const minutes = Math.floor((timeLeft % 3600) / 60);
+                    const seconds = timeLeft % 60;
+                    
+                    document.getElementById('countdown').textContent = 
+                        `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+                }
+            }, 1000);
+        }
+
+        function showMessage(message, type) {
+            const messagesDiv = document.getElementById('messages');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = type;
+            messageDiv.textContent = message;
+            messagesDiv.innerHTML = '';
+            messagesDiv.appendChild(messageDiv);
+        }
+
+        // Auto-connect if wallet is already connected
+        window.addEventListener('load', async () => {
+            console.log('Page loaded, checking for wallet...');
+            
+            if (typeof window.ethereum !== 'undefined') {
+                console.log('Ethereum provider found');
+                try {
+                    const accounts = await window.ethereum.request({ method: 'eth_accounts' });
+                    if (accounts.length > 0) {
+                        console.log('Auto-connecting to wallet...');
+                        connectWallet();
+                    }
+                } catch (error) {
+                    console.log('Auto-connect failed:', error);
+                }
+            } else {
+                console.log('No ethereum provider found');
+                // Show help immediately if no wallet detected
+                setTimeout(showWalletHelp, 2000);
+            }
+        });
+    </script>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/web3/1.10.0/web3.min.js"></script>
+</body>
+</html>
