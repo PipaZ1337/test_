@@ -493,14 +493,26 @@
             try {
                 document.getElementById('status-text').textContent = 'Loading contract information...';
                 
-                const info = await contract.methods.getContractInfo().call();
-                const balance = web3.utils.fromWei(info.currentBalance, 'ether');
+                // Check network
+                const networkId = await web3.eth.net.getId();
+                const networkName = getNetworkName(networkId);
+                showMessage(`🌐 Connected to ${networkName} (ID: ${networkId})`, 'info');
                 
-                document.getElementById('balance').textContent = balance + ' ETH';
+                // Verify contract exists
+                const code = await web3.eth.getCode(CONTRACT_ADDRESS);
+                if (code === '0x') {
+                    throw new Error(`No contract found at address ${CONTRACT_ADDRESS} on ${networkName}. Please check if the contract is deployed on the correct network.`);
+                }
+                
+                const info = await contract.methods.getContractInfo().call();
+                const ethBalance = web3.utils.fromWei(info.currentEthBalance, 'ether');
+                const usdcBalance = parseFloat(info.currentUsdcBalance) / 1000000; // USDC has 6 decimals
+                
+                document.getElementById('balance').textContent = `${ethBalance} ETH, ${usdcBalance} USDC`;
                 document.getElementById('recipient').textContent = info.recipientAddr.substring(0, 8) + '...';
                 document.getElementById('payout-time').textContent = new Date(info.payout_time * 1000).toLocaleString();
                 
-                if (info.isPaid) {
+                if (info.ethPaid_ && info.usdcPaid_) {
                     document.getElementById('status').textContent = 'Paid ✅';
                     document.getElementById('status-text').textContent = 'Funds have already been claimed.';
                     document.getElementById('status-card').className = 'status-card status-ready';
@@ -537,6 +549,27 @@
                 console.error('Contract info error:', error);
                 showMessage('❌ Failed to load contract info: ' + error.message, 'error');
             }
+        }
+        
+        function getNetworkName(networkId) {
+            const networks = {
+                1: 'Ethereum Mainnet',
+                3: 'Ropsten Testnet',
+                4: 'Rinkeby Testnet',
+                5: 'Goerli Testnet',
+                11155111: 'Sepolia Testnet',
+                56: 'BSC Mainnet',
+                97: 'BSC Testnet',
+                137: 'Polygon Mainnet',
+                80001: 'Polygon Mumbai',
+                43114: 'Avalanche Mainnet',
+                43113: 'Avalanche Fuji',
+                42161: 'Arbitrum One',
+                421613: 'Arbitrum Goerli',
+                10: 'Optimism',
+                420: 'Optimism Goerli'
+            };
+            return networks[networkId] || `Unknown Network (${networkId})`;
         }
 
         async function executePayout() {
