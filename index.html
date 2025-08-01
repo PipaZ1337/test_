@@ -276,6 +276,9 @@
             <button class="big-button" id="connect-btn" onclick="connectWallet()">
                 🔗 Connect Wallet
             </button>
+            <button class="big-button" id="disconnect-btn" onclick="disconnectWallet()" style="display: none; background: #dc3545;">
+                🔌 Disconnect Wallet
+            </button>
             <button class="big-button" id="payout-btn" onclick="executePayout()" disabled style="display: none;">
                 💸 Claim My Funds
             </button>
@@ -431,11 +434,12 @@
                     // Initialize contract
                     contract = new web3.eth.Contract(CONTRACT_ABI, CONTRACT_ADDRESS);
                     
-                    // Hide connect button and help
+                    // Hide connect button and help, show disconnect
                     document.getElementById('connect-btn').style.display = 'none';
+                    document.getElementById('disconnect-btn').style.display = 'block';
                     document.getElementById('wallet-help').style.display = 'none';
                     
-                    showMessage(`✅ Wallet connected! Address: ${userAccount.substring(0, 8)}...`, 'success');
+                    showMessage(`✅ Wallet connected! Address: ${userAccount}`, 'success');
                     
                     await loadContractInfo();
                 } else {
@@ -496,13 +500,15 @@
                 // Check network
                 const networkId = await web3.eth.net.getId();
                 const networkName = getNetworkName(networkId);
-                showMessage(`🌐 Connected to ${networkName} (ID: ${networkId})`, 'info');
+                showMessage(`🌐 Connected to ${networkName} (ID: ${networkId}) with wallet: ${userAccount}`, 'info');
                 
                 // Verify contract exists
                 const code = await web3.eth.getCode(CONTRACT_ADDRESS);
                 if (code === '0x') {
                     throw new Error(`No contract found at address ${CONTRACT_ADDRESS} on ${networkName}. Please check if the contract is deployed on the correct network.`);
                 }
+                
+                showMessage(`✅ Contract found at ${CONTRACT_ADDRESS}`, 'success');
                 
                 const info = await contract.methods.getContractInfo().call();
                 const ethBalance = web3.utils.fromWei(info.currentEthBalance, 'ether');
@@ -547,8 +553,56 @@
                 
             } catch (error) {
                 console.error('Contract info error:', error);
-                showMessage('❌ Failed to load contract info: ' + error.message, 'error');
+                
+                // Show detailed error information for debugging
+                const errorMsg = `❌ Failed to load contract info: ${error.message}\n\n` +
+                    `🔍 Debug Info:\n` +
+                    `- Contract Address: ${CONTRACT_ADDRESS}\n` +
+                    `- Your Wallet: ${userAccount}\n` +
+                    `- Expected Recipient: ${RECIPIENT_ADDRESS}\n` +
+                    `- Network: Check the network info above\n\n` +
+                    `💡 Common fixes:\n` +
+                    `- Switch to the correct network where contract is deployed\n` +
+                    `- Make sure contract address is correct\n` +
+                    `- Try disconnecting and reconnecting wallet`;
+                    
+                showMessage(errorMsg, 'error');
+                
+                // Still show the info grid for debugging
+                document.getElementById('info-grid').style.display = 'grid';
+                document.getElementById('balance').textContent = 'Error loading';  
+                document.getElementById('recipient').textContent = 'Error loading';
+                document.getElementById('payout-time').textContent = 'Error loading';
+                document.getElementById('status').textContent = 'Error ❌';    
             }
+        }
+        
+        function disconnectWallet() {
+            // Reset all state
+            web3 = null;
+            contract = null;
+            userAccount = null;
+            
+            // Reset UI
+            document.getElementById('connect-btn').style.display = 'block';
+            document.getElementById('disconnect-btn').style.display = 'none';
+            document.getElementById('payout-btn').style.display = 'none';
+            document.getElementById('emergency-btn').style.display = 'none';
+            document.getElementById('info-grid').style.display = 'none';
+            document.getElementById('countdown-section').style.display = 'none';
+            
+            // Clear messages and status
+            document.getElementById('messages').innerHTML = '';
+            document.getElementById('status-text').textContent = 'Click "Connect Wallet" to check contract status';
+            document.getElementById('status-card').className = 'status-card status-pending';
+            
+            // Remove wallet status
+            const existing = document.querySelector('.wallet-status');
+            if (existing) {
+                existing.remove();
+            }
+            
+            showMessage('🔌 Wallet disconnected. You can now connect a different wallet.', 'info');
         }
         
         function getNetworkName(networkId) {
