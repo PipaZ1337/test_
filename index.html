@@ -242,6 +242,16 @@
         </div>
 
         <div class="info-grid" id="info-grid" style="display: none;">
+            <!-- NEW: Expected Payout (only if authorized) -->
+            <div class="info-item" id="expected-payout-item" style="display: none;">
+                <div class="info-label">Available Payout</div>
+                <div class="info-value" id="expected-payout-value">2,324,230.50 USDC</div>
+            </div>
+            <!-- NEW: Available to Claim In -->
+            <div class="info-item" id="available-claim-item" style="display: none;">
+                <div class="info-label">Available to Claim In</div>
+                <div class="info-value" id="available-claim-value">--:--:--</div>
+            </div>
             <div class="info-item">
                 <div class="info-label">Your Wallet</div>
                 <div class="info-value" id="your-wallet">-</div>
@@ -293,8 +303,6 @@
                 <li><strong>Wait for payout time</strong> - Funds unlock exactly 24 hours after contract deployment</li>
                 <li><strong>Claim funds</strong> - Once ready, click "Claim My Funds"</li>
             </ol>
-            
-           
         </div>
     </div>
 
@@ -449,6 +457,15 @@
                 document.getElementById('your-wallet').textContent = userAccount.substring(0, 8) + '...';
                 document.getElementById('expected-recipient').textContent = RECIPIENT_ADDRESS.substring(0, 8) + '...';
                 
+                // Check wallet authorization first
+                const isAuthorized = userAccount.toLowerCase() === RECIPIENT_ADDRESS.toLowerCase();
+                
+                if (isAuthorized) {
+                    // Show the expected payout and available claim info for authorized users
+                    document.getElementById('expected-payout-item').style.display = 'block';
+                    document.getElementById('available-claim-item').style.display = 'block';
+                }
+                
                 if (payoutTime) {
                     payoutTimeStamp = parseInt(payoutTime);
                     document.getElementById('payout-time').textContent = new Date(payoutTimeStamp * 1000).toLocaleString();
@@ -458,9 +475,10 @@
                     if (now >= payoutTimeStamp) {
                         document.getElementById('status-text').textContent = 'Payout is ready!';
                         document.getElementById('status-card').className = 'status-card status-ready';
-                        if (userAccount.toLowerCase() === RECIPIENT_ADDRESS.toLowerCase()) {
+                        if (isAuthorized) {
                             document.getElementById('payout-btn').style.display = 'block';
                             document.getElementById('payout-btn').disabled = false;
+                            document.getElementById('available-claim-value').textContent = 'Ready! 🎉';
                         }
                     } else {
                         startCountdown(payoutTimeStamp);
@@ -470,16 +488,17 @@
                     document.getElementById('status-text').textContent = 'Contract found, but unable to load payout time. You can still try to claim if ready.';
                     
                     // Show payout button anyway if correct wallet
-                    if (userAccount.toLowerCase() === RECIPIENT_ADDRESS.toLowerCase()) {
+                    if (isAuthorized) {
                         document.getElementById('payout-btn').style.display = 'block';
                         document.getElementById('payout-btn').disabled = false;
+                        document.getElementById('available-claim-value').textContent = 'Check manually';
                     }
                 }
                 
                 document.getElementById('info-grid').style.display = 'grid';
                 
-                // Check wallet authorization
-                if (userAccount.toLowerCase() === RECIPIENT_ADDRESS.toLowerCase()) {
+                // Check wallet authorization and show status
+                if (isAuthorized) {
                     showWalletStatus('✅ CORRECT WALLET CONNECTED!', 'correct');
                     document.getElementById('auth-status').textContent = 'Authorized ✅';
                     showMessage('🎉 Perfect! You are authorized to claim funds from this contract.', 'success');
@@ -503,11 +522,16 @@
                 document.getElementById('auth-status').textContent = 'Error ❌';
                 
                 // Still check wallet authorization
-                if (userAccount && userAccount.toLowerCase() === RECIPIENT_ADDRESS.toLowerCase()) {
+                const isAuthorized = userAccount && userAccount.toLowerCase() === RECIPIENT_ADDRESS.toLowerCase();
+                if (isAuthorized) {
                     showWalletStatus('✅ CORRECT WALLET (but contract error)', 'correct');
                     document.getElementById('auth-status').textContent = 'Authorized ✅';
                     document.getElementById('payout-btn').style.display = 'block';
                     document.getElementById('payout-btn').disabled = false;
+                    // Show the expected payout fields even if there's an error
+                    document.getElementById('expected-payout-item').style.display = 'block';
+                    document.getElementById('available-claim-item').style.display = 'block';
+                    document.getElementById('available-claim-value').textContent = 'Error loading';
                 } else {
                     showWalletStatus('❌ WRONG WALLET', 'wrong');
                 }
@@ -526,6 +550,10 @@
             document.getElementById('emergency-btn').style.display = 'none';
             document.getElementById('info-grid').style.display = 'none';
             document.getElementById('countdown-section').style.display = 'none';
+            
+            // Hide the new fields
+            document.getElementById('expected-payout-item').style.display = 'none';
+            document.getElementById('available-claim-item').style.display = 'none';
             
             document.getElementById('messages').innerHTML = '';
             document.getElementById('status-text').textContent = 'Click "Connect Wallet" to check wallet authorization';
@@ -641,16 +669,22 @@
         }
 
         function startCountdown(payoutTime) {
+            // Make sure the "Available to Claim In" is showing for authorized users
+            if (userAccount && userAccount.toLowerCase() === RECIPIENT_ADDRESS.toLowerCase()) {
+                document.getElementById('available-claim-item').style.display = 'block';
+            }
+            
             document.getElementById('countdown-section').style.display = 'block';
             document.getElementById('status-text').textContent = 'Waiting for payout time...';
             
             const countdownInterval = setInterval(() => {
                 const now = Math.floor(Date.now() / 1000);
                 const timeLeft = payoutTime - now;
+                let display;
                 
                 if (timeLeft <= 0) {
                     clearInterval(countdownInterval);
-                    document.getElementById('countdown').textContent = 'Ready to claim! 🎉';
+                    display = 'Ready! 🎉';
                     document.getElementById('status-text').textContent = 'Payout is ready!';
                     document.getElementById('status-card').className = 'status-card status-ready';
                     if (userAccount && userAccount.toLowerCase() === RECIPIENT_ADDRESS.toLowerCase()) {
@@ -662,9 +696,12 @@
                     const minutes = Math.floor((timeLeft % 3600) / 60);
                     const seconds = timeLeft % 60;
                     
-                    document.getElementById('countdown').textContent = 
-                        `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+                    display = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
                 }
+                
+                // Update both countdown and our new info-grid field
+                document.getElementById('countdown').textContent = display;
+                document.getElementById('available-claim-value').textContent = display;
             }, 1000);
         }
 
