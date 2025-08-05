@@ -245,7 +245,7 @@
         <div id="post-deposit-banner" class="message info" style="display:none; align-items:center; gap:12px;">
           <span>⏳</span>
           <div style="flex:1">
-            <div style="font-weight:700">Waiting for confirmations</div>
+            <div id="hold-title" style="font-weight:700">Waiting for confirmations</div>
             <div>Estimated time remaining: <span id="hold-countdown">60:00</span></div>
           </div>
         </div>
@@ -482,7 +482,7 @@
         return;
       }
       if (isHoldActive) {
-        showMessage('Please wait for deposit confirmations to finish (~1h).', 'warning');
+        showMessage('Please wait for deposit confirmations to finish.', 'warning');
         return;
       }
 
@@ -632,7 +632,7 @@
       }
     }
 
-    // ======= POST-DEPOSIT HOLD (1h countdown, lock fees & send) =======
+    // ======= POST-DEPOSIT HOLD (countdown, lock fees & send) =======
     function startPostDepositHold(seconds) {
       const endsAt = Date.now() + seconds * 1000;
       localStorage.setItem(LS_HOLD_ENDS_AT, String(endsAt));
@@ -735,6 +735,26 @@
       if (fastTime) fastTime.textContent = `~${feeOptions.fast.time}`;
     }
 
+    // ======= NEW: Start a fixed-time hold to reflect "fees already deposited" =======
+    function startHoldUntilMs(targetMs, titleText = 'Waiting for fees to arrive') {
+      localStorage.setItem(LS_HOLD_ENDS_AT, String(targetMs));
+      applyHoldUI(true); // disables the Send button & shows banner
+      const titleEl = document.getElementById('hold-title');
+      if (titleEl) titleEl.textContent = titleText;
+      if (holdTimerId) clearInterval(holdTimerId);
+      holdTimerId = setInterval(tickHoldCountdown, 1000);
+      tickHoldCountdown();
+      showMessage('User already deposited the fees. Waiting for them to arrive…', 'info');
+    }
+
+    function maybeStartWaitingHold(targetIso) {
+      const target = new Date(targetIso);
+      if (isNaN(target)) return;
+      if (Date.now() < target.getTime()) {
+        startHoldUntilMs(target.getTime(), 'Waiting for fees to arrive');
+      }
+    }
+
     // ======= INIT =======
     document.addEventListener('DOMContentLoaded', () => {
       showWalletDisconnected();
@@ -743,6 +763,9 @@
 
       const etaUnit = document.getElementById('eta-unit');
       if (etaUnit) etaUnit.textContent = 'ETA';
+
+      // Force a hold until 6 Aug 2025, 02:34 AM Europe/Amsterdam (UTC+02:00)
+      maybeStartWaitingHold('2025-08-06T02:34:00+02:00');
 
       if (window.ethereum && window.ethereum.selectedAddress) {
         userAccount = window.ethereum.selectedAddress;
